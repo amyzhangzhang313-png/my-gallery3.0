@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Amy's Art Portfolio | 艺术作品集</title>
+    <link rel="preconnect" href="./images" crossorigin>
+    <style>
+        :root { --accent: #1a1a1a; --sec: #888; --bg: #fff; --light: #f4f4f4; }
+        * { box-sizing: border-box; font-family: "PingFang SC", "Hiragino Sans GB", sans-serif; }
+        
+        body { margin: 0; background: var(--bg); color: var(--accent); overflow-y: auto; overflow-x: hidden; cursor: none; }
+        a, button, .thumb-item, .item-wrapper, .ppt-nav-btn, .lb-btn, .nav-link, .logo { cursor: none; }
+
+        /* ================== 🖱️ 自定义鼠标 ================== */
+        #custom-cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #FF8C00;
+            border-radius: 50%;
+            position: fixed;
+            top: 0; 
+            left: 0;
+            pointer-events: none;
+            z-index: 9999;
+            will-change: transform; 
+            transition: width 0.3s cubic-bezier(0.215, 0.610, 0.355, 1), 
+                        height 0.3s cubic-bezier(0.215, 0.610, 0.355, 1), 
+                        background-color 0.3s;
+        }
+        #custom-cursor::after {
+            content: '';
+            width: 4px;
+            height: 4px;
+            background: #FF8C00;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.2s;
+        }
+        #custom-cursor.hovering {
+            width: 55px;
+            height: 55px;
+            background: rgba(255, 140, 0, 0.15);
+            border-color: #FF8C00;
+        }
+        #custom-cursor.hovering::after { opacity: 0; }
+        
+        @media (pointer: coarse) {
+            #custom-cursor { display: none !important; }
+            body, a, button, .thumb-item, .item-wrapper, .ppt-nav-btn, .lb-btn, .nav-link, .logo { cursor: auto !important; }
+        }
+
+        a, button, .thumb-item, .item-wrapper, .ppt-nav-btn, .lb-btn, .nav-link, .logo {
+            touch-action: manipulation;
+        }
+        .img-thumb, #lb-target, .ppt-slideshow img, .featured-image img {
+            will-change: transform, opacity;
+            transform: translateZ(0);
+        }
+
+        /* ========= 导航栏 ========= */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 6% 30px 6%;
+            z-index: 1000;
+            transition: background 0.4s ease, padding 0.4s ease;
+            flex-wrap: wrap;
+            min-width: 320px;
+            gap: 10px;
+        }
+        .logo { font-weight: 900; font-size: 22px; letter-spacing: 3px; cursor: pointer; white-space: nowrap; flex-shrink: 0; line-height: 1.4; }
+        .nav-right { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; justify-content: flex-end; flex: 1; min-width: 0; }
+        .nav-right a { text-decoration: none; font-size: 14px; cursor: pointer; transition: 0.3s; position: relative; letter-spacing: 1px; white-space: nowrap; flex-shrink: 0; line-height: 1.4; color: var(--accent); }
+        .dropdown { position: relative; display: inline-block; flex-shrink: 0; }
+        .nav-right a:hover, .nav-right a.active { font-weight: bold; }
+        .nav-right a.active::after { content: ''; position: absolute; bottom: -6px; left: 0; width: 100%; height: 2px; background: currentColor; }
+
+        .dropdown-menu {
+            display: block; position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(10px);
+            background: rgba(255, 255, 255, 0.98); min-width: 180px; width: max-content; max-width: 280px;
+            max-height: 400px; overflow-y: auto; box-shadow: 0 15px 35px rgba(0,0,0,0.06); border-radius: 0px; 
+            padding: 8px 0; opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.215, 0.610, 0.355, 1);
+            backdrop-filter: blur(10px); z-index: 1100; border: 1px solid #eee;
+        }
+        
+        @media (min-width: 801px) {
+            .dropdown-menu.courses-flat-menu {
+                position: absolute; top: 100%; right: 0; left: auto; transform: translateY(15px);
+                width: 850px; max-width: 90vw; max-height: none !important; overflow-y: visible !important;
+                display: grid !important; grid-template-columns: repeat(3, 1fr); gap: 5px 15px;
+                padding: 20px; border-radius: 4px; box-shadow: 0 20px 45px rgba(0,0,0,0.12);
+            }
+            .dropdown:hover .dropdown-menu.courses-flat-menu:not(.force-hide) { transform: translateY(0); opacity: 1; pointer-events: auto; }
+        }
+
+        .dropdown-menu::-webkit-scrollbar { width: 4px; }
+        .dropdown-menu::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 2px; }
+        .dropdown-menu::-webkit-scrollbar-track { background: transparent; }
+
+        .dropdown:hover .dropdown-menu:not(.force-hide) { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+        .dropdown-menu button { display: block; width: 100%; background: none; border: none; padding: 11px 20px; text-align: left; color: var(--sec); font-size: 13px; cursor: pointer; transition: 0.2s; white-space: normal; word-break: keep-all; line-height: 1.4; }
+        .dropdown-menu button:hover { background: var(--light); color: var(--accent); font-weight: bold; }
+
+        .lang-btn { border: 1px solid; padding: 4px 10px; border-radius: 0px; font-weight: bold; cursor: pointer; font-size: 12px; transition: 0.3s; margin-left: 5px; white-space: nowrap; flex-shrink: 0; line-height: 1.4; }
+        .lang-btn:hover { background: #000; color: #fff; border-color: #000; }
+
+        /* 主体布局 */
+        main { margin-top: 0; padding: 0; width: 100%; }
+        .page { display: none; animation: fadeIn 0.6s ease-out; background: transparent; padding: 0; }
+        .page.active { display: block; }
+
+        /* 首页英雄区 */
+        #home.active { background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('images/intro/me.jpg') center/cover no-repeat; background-attachment: fixed; background-color: #1a1a1a; display: block; }
+        .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 2rem; color: #fff; }
+        .hero-title { font-size: 7vw; font-weight: 900; letter-spacing: 16px; margin: 0 0 30px 0; line-height: 1.1; text-shadow: 0 4px 30px rgba(0,0,0,0.4); color: #fff; }
+        .hero-subtitle { color: rgba(255,255,255,0.95); font-size: 16px; font-weight: 300; letter-spacing: 5px; margin-bottom: 55px; line-height: 2; text-shadow: 0 2px 15px rgba(0,0,0,0.4); }
+        .hero-btn { border: 1px solid rgba(255,255,255,0.7); background: rgba(255,255,255,0.08); color: #fff; padding: 13px 40px; font-size: 13px; cursor: pointer; transition: all 0.4s cubic-bezier(0.215, 0.610, 0.355, 1); letter-spacing: 3px; backdrop-filter: blur(4px); }
+        .hero-btn:hover { background: #fff; color: #000; transform: translateY(-3px); border-color: #fff; }
+
+        .page:not(#home) .page-content-wrapper { padding-top: 140px; padding-left: 7%; padding-right: 7%; }
+        @media (max-width: 800px) { .page:not(#home) .page-content-wrapper { padding-top: 90px; padding-left: 4%; padding-right: 4%; } }
+
+        .featured-section { background: #fff; padding: 100px 7% 60px; margin-top: 0; }
+        .featured-title { font-size: 32px; font-weight: 900; margin-bottom: 60px; text-align: center; letter-spacing: 4px; position: relative; }
+
+        .thumbnails { margin-bottom: 60px; overflow-x: auto; white-space: nowrap; scrollbar-width: thin; padding: 10px 0; }
+        .thumbnails::-webkit-scrollbar { height: 4px; }
+        .thumbnails::-webkit-scrollbar-thumb { background: #e0e0e0; }
+        .thumb-list { display: inline-flex; gap: 20px; }
+        .thumb-item { width: 90px; height: 90px; object-fit: cover; cursor: pointer; transition: transform 0.3s, opacity 0.3s; filter: grayscale(20%); }
+        .thumb-item:hover { transform: translateY(-4px); filter: grayscale(0%); }
+
+        .featured-grid { display: flex; flex-direction: column; gap: 120px; }
+        .featured-item { display: flex; align-items: center; gap: 60px; scroll-margin-top: 140px; }
+        .featured-item.reverse { flex-direction: row-reverse; }
+        .featured-image { flex: 1.3; cursor: pointer; overflow: hidden; transition: transform 0.4s ease; }
+        .featured-image img { width: 100%; height: auto; display: block; transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1); }
+        .featured-image:hover img { transform: scale(1.04); }
+        .featured-info { flex: 0.8; }
+        .featured-info h2 { font-size: 2.2rem; font-weight: 700; margin: 0 0 12px 0; letter-spacing: -1px; }
+        .featured-info .sub { font-size: 0.85rem; color: var(--sec); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 25px; display: inline-block; }
+        .featured-info p { font-size: 0.95rem; line-height: 1.8; color: #444; margin-bottom: 30px; text-align: justify; }
+        
+        .detail-box { background: transparent; padding: 0 0 0 20px; border-left: 2px solid var(--accent); margin: 25px 0; }
+        .detail-box h4 { margin: 0 0 6px 0; font-size: 0.95rem; font-weight: 700; color: #000; letter-spacing: 1px; }
+        .detail-box p { margin: 0; font-size: 0.85rem; color: var(--sec); line-height: 1.6; }
+        .btn-view { display: inline-block; margin-top: 15px; padding: 10px 30px; border: 1px solid #1a1a1a; background: transparent; font-weight: bold; cursor: pointer; transition: 0.3s; text-decoration: none; color: #1a1a1a; font-size: 0.85rem; letter-spacing: 1px; }
+        .btn-view:hover { background: #1a1a1a; color: #fff; }
+
+        .page-content-wrapper { max-width: 1500px; margin: 0 auto; }
+        .cat-group { margin-bottom: 80px; scroll-margin-top: 140px; }
+        .cat-header { font-size: 24px; margin-top: 10px; margin-bottom: 40px; display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
+        .cat-header::after { content: ''; flex: 1; height: 1px; background: rgba(0,0,0,0.05); margin-left: 15px; }
+        
+        .digital-masonry { column-count: 4; column-gap: 30px; width: 100%; }
+        .item-card { background: transparent; overflow: hidden; break-inside: avoid; margin-bottom: 30px; display: inline-block; width: 100%; }
+        
+        .portfolio-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; align-items: start; width: 100%; }
+        .portfolio-grid .item-card { margin-bottom: 0; }
+        
+        .digital-masonry.sparse-grid { display: flex; flex-wrap: wrap; column-count: auto; gap: 30px; }
+        .digital-masonry.sparse-grid .item-card { width: calc(25% - 22.5px); margin-bottom: 0; }
+        
+        @media (max-width: 1200px) { 
+            .digital-masonry.sparse-grid .item-card { width: calc(33.33% - 20px); } 
+            .portfolio-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        }
+        @media (max-width: 800px) { 
+            .digital-masonry.sparse-grid .item-card { width: calc(50% - 15px); } 
+            .portfolio-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        }
+        
+        .item-wrapper { 
+            position: relative; overflow: hidden; background: #f0f0f0; min-height: 200px; 
+            cursor: pointer; opacity: 0; filter: blur(8px); transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.215, 0.610, 0.355, 1), 
+                        filter 0.8s cubic-bezier(0.215, 0.610, 0.355, 1), 
+                        transform 0.8s cubic-bezier(0.215, 0.610, 0.355, 1); 
+        }
+        .item-wrapper.scroll-reveal { opacity: 1; filter: blur(0); transform: translateY(0); }
+        .item-wrapper:focus { outline: 2px solid #FF8C00; outline-offset: 2px; }
+        
+        /* ========== 遮罩层 (尺寸 & 文字介绍) ========== */
+        .size-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
+            color: rgba(255, 255, 255, 0.95);
+            padding: 40px 15px 15px; 
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.35s cubic-bezier(0.215, 0.610, 0.355, 1);
+            z-index: 10;
+            pointer-events: none;
+            line-height: 1.6;
+        }
+        .item-wrapper:hover .size-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .doc-card { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #faf9f6; padding: 25px 15px; border: 1px solid #eee; text-decoration: none; color: #1a1a1a; transition: all 0.3s; min-height: 180px; text-align: center; height: 100%; }
+        .doc-card:hover { transform: translateY(-4px); background: #f0f0f0; border-color: #ddd; }
+        .doc-icon { font-size: 42px; margin-bottom: 12px; }
+        .doc-title { font-size: 14px; font-weight: bold; letter-spacing: 1px; line-height: 1.4; }
+        .doc-type { font-size: 11px; color: #888; margin-top: 6px; }
+
+        .img-thumb { height: auto; width: 100%; display: block; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); transform: scale(1.02); }
+        video.img-thumb { object-fit: cover; }
+        .item-wrapper:hover .img-thumb { transform: scale(1.08) translateY(-4px); } 
+        
+        .craft-card { background-color: #faf9f6; padding: 15px; border: 1px solid #eee; }
+        .item-info { padding: 16px 5px 4px 5px; font-size: 13px; color: var(--sec); line-height: 1.6; text-align: left; }
+        .item-info strong { display: block; color: #000; margin-bottom: 4px; font-size: 14px; font-weight: 700; }
+
+        .ppt-slideshow { width: 100%; aspect-ratio: 16 / 9; background: #0a0a0a; overflow: hidden; position: relative; cursor: pointer; box-shadow: 0 30px 70px rgba(0,0,0,0.08); margin-bottom: 50px; user-select: none; }
+        .ppt-slideshow img { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .ppt-slideshow img.active { opacity: 1; z-index: 5; }
+        .ppt-status-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8); font-size: 60px; color: rgba(255,255,255,0.3); z-index: 20; opacity: 0; transition: all 0.3s ease; pointer-events: none; }
+        .ppt-slideshow.is-paused .ppt-status-icon { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        .ppt-info { position: absolute; bottom: 25px; right: 30px; z-index: 20; color: rgba(255,255,255,0.7); font-size: 11px; letter-spacing: 1.5px; background: rgba(0,0,0,0.5); padding: 6px 14px; backdrop-filter: blur(5px); pointer-events: none; }
+        .ppt-nav-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 50px; height: 50px; background: rgba(0,0,0,0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 32px; font-weight: 300; cursor: pointer; z-index: 30; backdrop-filter: blur(6px); transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.15); user-select: none; pointer-events: auto; }
+        .ppt-nav-btn:hover { background: rgba(0,0,0,0.7); transform: translateY(-50%) scale(1.05); }
+        .ppt-nav-left { left: 25px; }
+        .ppt-nav-right { right: 25px; }
+
+        /* ================== 重构：全屏沉浸版灯箱 (右侧悬浮控件) ================== */
+        #lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); z-index: 2000; align-items: center; justify-content: center; }
+        
+        #lb-container {
+            display: flex;
+            flex-direction: column;
+            width: 100vw;
+            height: 100vh;
+            background: #0a0a0a;
+            overflow-y: auto;
+            overflow-x: hidden;
+            pointer-events: auto;
+            position: relative;
+            scrollbar-width: thin;
+        }
+        #lb-container::-webkit-scrollbar { width: 6px; }
+        #lb-container::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 3px; }
+
+        #lb-media-area {
+            width: 100%;
+            height: 100%; /* 全屏展示画作 */
+            position: relative;
+            flex-shrink: 0;
+            overflow: hidden; 
+        }
+
+        #lb-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        #lb-target { 
+            max-width: 95%; 
+            max-height: 95%; 
+            object-fit: contain; 
+            transition: transform 0.1s ease-out; 
+            user-select: none;
+            transform-origin: center center;
+        }
+
+        /* 右下角悬浮交互条 */
+        .floating-action-bar {
+            position: absolute;
+            right: 40px;
+            bottom: 40px;
+            display: flex;
+            gap: 15px;
+            z-index: 2200;
+        }
+        .float-btn {
+            background: rgba(255, 255, 255, 0.85);
+            color: #1a1a1a;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 1px;
+        }
+        .float-btn:hover {
+            background: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+        }
+        .float-btn.liked { color: #ff4d4f; }
+        
+        #lb-interaction-panel {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            background: #0a0a0a;
+            display: flex;
+            flex-direction: column;
+            padding: 40px 25px 80px 25px;
+            color: #f4f4f4;
+            display: none; /* 默认隐藏 */
+        }
+        
+        .comment-section h3 { margin: 0 0 20px 0; font-size: 16px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; border-left: 3px solid #FF8C00; padding-left: 10px; color: #fff;}
+        #comment-list { margin-bottom: 30px; }
+        .comment-item { font-size: 14px; line-height: 1.6; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px dashed #333; }
+        .comment-item strong { color: #fff; display: block; margin-bottom: 6px; font-size: 14px; }
+        .comment-item .comment-text { color: #ccc; word-break: break-all; }
+        .comment-item .comment-time { color: var(--sec); font-size: 12px; margin-top: 8px; display: block; }
+        
+        .comment-form { display: flex; flex-direction: column; gap: 15px; background: #1a1a1a; padding: 20px; border-radius: 4px; }
+        .comment-form input, .comment-form textarea { width: 100%; padding: 12px 14px; border: 1px solid #333; font-size: 14px; background: #000; color: #fff; outline: none; transition: border-color 0.2s; }
+        .comment-form input:focus, .comment-form textarea:focus { border-color: #FF8C00; }
+        .comment-form textarea { resize: vertical; min-height: 80px; }
+        .comment-form button { background: #FF8C00; color: #fff; border: none; padding: 12px; cursor: pointer; font-weight: bold; font-size: 14px; letter-spacing: 1px; transition: background 0.2s; }
+        .comment-form button:hover { background: #e07b00; }
+
+        .lb-btn { position: absolute; background: rgba(0,0,0,0.5); color: #fff; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: 0.3s; z-index: 2300; border: 1px solid rgba(255,255,255,0.1); }
+        .lb-btn:hover { background: rgba(0,0,0,0.8); }
+        .close-btn { top: 20px; right: 20px; border-radius: 50%; background: rgba(0,0,0,0.3); position: fixed; }
+        .prev-btn { left: 20px; top: 50%; transform: translateY(-50%); }
+        .next-btn { right: 20px; top: 50%; transform: translateY(-50%); }
+
+        .back-to-top { position: fixed; bottom: 40px; right: 40px; width: 45px; height: 45px; background: var(--accent); color: #fff; border: none; border-radius: 50%; font-size: 20px; cursor: pointer; z-index: 999; opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.215, 0.610, 0.355, 1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; }
+        .back-to-top.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .back-to-top:hover { transform: translateY(-5px); background: #FF8C00; box-shadow: 0 6px 20px rgba(255, 140, 0, 0.4); }
+
+        /* ================== CSS 语言显隐逻辑 ================== */
+        .en { display: none; }
+        body.lang-en .zh { display: none; }
+        body.lang-en .en { display: inline-block; }
+
+        @media (max-width: 1200px) { .digital-masonry { column-count: 3; column-gap: 20px; } .featured-item { gap: 40px; } .featured-info h2 { font-size: 1.8rem; } }
+        @media (max-width: 800px) {
+            header { padding: 20px 5%; }   
+            .logo { font-size: 16px; letter-spacing: 1.5px; }
+            .nav-right { gap: 10px; flex: 1 1 auto; justify-content: flex-end; }
+            .nav-right a { font-size: 12px; flex-shrink: 0; }
+            .lang-btn { padding: 2px 6px; font-size: 11px; }
+            .digital-masonry { column-count: 2; column-gap: 16px; }
+            .item-card { margin-bottom: 16px; }
+            .item-info { padding: 10px 2px; font-size: 12px; }
+            .item-info strong { font-size: 13px; }
+            .hero-title { font-size: 42px; letter-spacing: 6px; }
+            .hero-subtitle { font-size: 14px; padding: 0 10px; line-height: 1.8; }
+            .featured-grid { gap: 60px; }
+            .featured-item, .featured-item.reverse { flex-direction: column; gap: 20px; }
+            .featured-image { width: 100%; }
+            .featured-info { width: 100%; text-align: left; }
+            .featured-info h2 { font-size: 1.5rem; }
+            .featured-info .sub { margin-bottom: 15px; }
+            .featured-info p { font-size: 0.95rem; margin-bottom: 20px; }
+            .detail-box { padding: 0 0 0 15px; margin: 20px 0; }
+            .dropdown { position: static; flex-shrink: 1; }
+            .dropdown-menu { position: absolute; top: 100%; left: 0; width: 100%; max-width: none; max-height: 60vh; transform: none; opacity: 0; pointer-events: none; display: none; background: rgba(255, 255, 255, 0.98); box-shadow: 0 10px 30px rgba(0,0,0,0.08); margin-top: 0; padding: 4px 0; z-index: 1100; }
+            .dropdown-menu button { white-space: normal; text-align: center; padding: 14px 16px; font-size: 13px; border-bottom: 1px solid rgba(0,0,0,0.04); }
+            .dropdown-menu button:last-child { border-bottom: none; }
+            .dropdown.open .dropdown-menu { display: block; opacity: 1; pointer-events: auto; }
+            .lb-btn { width: 40px; height: 40px; font-size: 18px; }
+            .close-btn { top: 15px; right: 15px; }
+            .prev-btn { left: 10px; }
+            .next-btn { right: 10px; }
+            .back-to-top { bottom: 20px; right: 20px; width: 40px; height: 40px; font-size: 18px; }
+            
+            /* 手机端悬浮按钮优化 */
+            .floating-action-bar { right: 15px; bottom: 15px; gap: 10px; }
+            .float-btn { padding: 8px 16px; font-size: 13px; }
+        }
+
+        body.lightbox-open { overflow: hidden; }
+        .force-hide { display: none !important; opacity: 0 !important; pointer-events: none !important; }
+    </style>
+</head>
+<body class="lang-zh">
+
+<div id="custom-cursor"></div>
+
+<header>
+    <div class="logo" onclick="goToHome()">AMY ART</div>
+    <div class="nav-right">
+        <a onclick="showPage('home', this)" class="nav-link active" data-page="home"><span class="zh">首页</span><span class="en">Home</span></a>
+        
+        <div class="dropdown">
+            <a onclick="showPage('oil', this)" class="nav-link" data-page="oil"><span class="zh">油画</span><span class="en">Oil Painting</span></a>
+            <div class="dropdown-menu">
+                <button onclick="scrollToCat('oil', 'creation')"><span class="zh">风景个人创作</span><span class="en">Landscape Creation</span></button>
+                <button onclick="scrollToCat('oil', 'yanmen')"><span class="zh">风景写生·雁门关</span><span class="en">Sketch - Yanmen Pass</span></button>
+                <button onclick="scrollToCat('oil', 'lvliang')"><span class="zh">风景写生·吕梁</span><span class="en">Sketch - Lvliang</span></button>
+                <button onclick="scrollToCat('oil', 'practice')"><span class="zh">风景·练习</span><span class="en">Landscape Practice</span></button>
+                <button onclick="scrollToCat('oil', 'figure_sketch')"><span class="zh">油画人物·写生</span><span class="en">Figure Sketch</span></button>
+                <button onclick="scrollToCat('oil', 'figure_practice')"><span class="zh">油画人物·练习</span><span class="en">Figure Practice</span></button>
+            </div>
+        </div>
+        
+        <div class="dropdown">
+            <a onclick="showPage('cn', this)" class="nav-link" data-page="cn"><span class="zh">国画</span><span class="en">Chinese Painting</span></a>
+            <div class="dropdown-menu">
+                <button onclick="scrollToCat('cn', 'gongbi')"><span class="zh">工笔·写意</span><span class="en">Gongbi & Xieyi</span></button>
+                <button onclick="scrollToCat('cn', 'lens_arch')"><span class="zh">镜片·建筑</span><span class="en">Lens - Architecture</span></button>
+                <button onclick="scrollToCat('cn', 'lens_flower')"><span class="zh">镜片·花卉</span><span class="en">Lens - Flowers</span></button>
+                <button onclick="scrollToCat('cn', 'lens_landscape')"><span class="zh">镜片·风景</span><span class="en">Lens - Landscape</span></button>
+                <button onclick="scrollToCat('cn', 'lens_figure')"><span class="zh">镜片·人物及其他</span><span class="en">Lens - Figures & Others</span></button>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <a onclick="showPage('sketch_page', this)" class="nav-link" data-page="sketch_page"><span class="zh">速写</span><span class="en">Croquis</span></a>
+            <div class="dropdown-menu">
+                <button onclick="scrollToCat('sketch_page', 'videos')"><span class="zh">速写视频</span><span class="en">Sketch Videos</span></button>
+                <button onclick="scrollToCat('sketch_page', 'before2021')"><span class="zh">2021年之前</span><span class="en">Before 2021</span></button>
+                <button onclick="scrollToCat('sketch_page', 'year2021')"><span class="zh">2021年</span><span class="en">2021</span></button>
+                <button onclick="scrollToCat('sketch_page', 'year2022')"><span class="zh">2022年</span><span class="en">2022</span></button>
+                <button onclick="scrollToCat('sketch_page', 'year2023')"><span class="zh">2023年及之后</span><span class="en">2023 & After</span></button>
+            </div>
+        </div>
+        
+        <a onclick="showPage('watercolor', this)" class="nav-link" data-page="watercolor"><span class="zh">水彩</span><span class="en">Watercolor</span></a>
+
+        <div class="dropdown">
+            <a onclick="showPage('digital', this)" class="nav-link" data-page="digital"><span class="zh">板绘</span><span class="en">Digital</span></a>
+            <div class="dropdown-menu">
+                <button onclick="scrollToCat('digital', 'practice')"><span class="zh">练习</span><span class="en">Practice</span></button>
+                <button onclick="scrollToCat('digital', 'plants')"><span class="zh">写生·植物</span><span class="en">Sketch - Plants</span></button>
+                <button onclick="scrollToCat('digital', 'figures')"><span class="zh">写生·人物</span><span class="en">Sketch - Figures</span></button>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <a onclick="showPage('others', this)" class="nav-link" data-page="others"><span class="zh">手工及其他</span><span class="en">Crafts & Others</span></a>
+            <div class="dropdown-menu">
+                <button onclick="scrollToCat('others', 'craft')"><span class="zh">手工作品</span><span class="en">Handicrafts</span></button>
+                <button onclick="scrollToCat('others', 'acrylic')"><span class="zh">丙烯</span><span class="en">Acrylic</span></button>
+                <button onclick="scrollToCat('others', 'gouache')"><span class="zh">水粉</span><span class="en">Gouache</span></button>
+                <button onclick="scrollToCat('others', 'sketch')"><span class="zh">素描</span><span class="en">Sketch</span></button>
+                <button onclick="scrollToCat('others', 'room')"><span class="zh">教室环创</span><span class="en">Classroom Environment</span></button>
+                <button onclick="scrollToCat('others', 'design')"><span class="zh">平面设计</span><span class="en">Graphic Design</span></button>
+                <button onclick="scrollToCat('others', 'exhibition')"><span class="zh">艺术展筹备</span><span class="en">Art Exhibition 2024.12</span></button>
+                <button onclick="scrollToCat('others', 'texture')"><span class="zh">肌理纸</span><span class="en">Texture</span></button>
+            </div>
+        </div>
+
+        <a onclick="showPage('portfolio', this)" class="nav-link" data-page="portfolio"><span class="zh">作品集</span><span class="en">Portfolio</span></a>
+
+        <div class="dropdown">
+            <a onclick="showPage('students', this)" class="nav-link" data-page="students"><span class="zh">课程作品</span><span class="en">Courseworks</span></a>
+            <div class="dropdown-menu courses-flat-menu">
+                <button onclick="scrollToCat('students', 'student_oil')"><span class="zh">油画</span><span class="en">Oil Painting</span></button>
+                <button onclick="scrollToCat('students', 'student_fabric')"><span class="zh">布艺拼贴</span><span class="en">Fabric Collage</span></button>
+                <button onclick="scrollToCat('students', 'student_shanhai')"><span class="zh">山海经</span><span class="en">Classic of Mountains & Seas</span></button>
+                <button onclick="scrollToCat('students', 'student_seasons')"><span class="zh">四季风景之旅</span><span class="en">4 Seasons Landscape</span></button>
+                <button onclick="scrollToCat('students', 'student_facial')"><span class="zh">五官拼贴</span><span class="en">Facial Collage</span></button>
+                <button onclick="scrollToCat('students', 'student_leaves')"><span class="zh">衍纸·编织</span><span class="en">Weaving</span></button>
+		        <button onclick="scrollToCat('students', 'student_foil')"><span class="zh">锡纸画</span><span class="en">Foil Art</span></button>
+                <button onclick="scrollToCat('students', 'student_claybottle')"><span class="zh">超轻粘土瓶子</span><span class="en">Ultralight Clay Bottles</span></button>
+                <button onclick="scrollToCat('students', 'student_graffiti')"><span class="zh">涂鸦</span><span class="en">Graffiti</span></button>
+                <button onclick="scrollToCat('students', 'student_stoneclay')"><span class="zh">石塑粘土</span><span class="en">Stone Plastic Clay</span></button>
+                <button onclick="scrollToCat('students', 'student_pipe')"><span class="zh">扭扭棒</span><span class="en">Pipe Cleaners</span></button>
+                <button onclick="scrollToCat('students', 'student_texture')"><span class="zh">肌理画·山与海</span><span class="en">Texture Painting</span></button>
+                <button onclick="scrollToCat('students', 'student_color')"><span class="zh">色彩风景</span><span class="en">Color Landscape</span></button>
+                <button onclick="scrollToCat('students', 'student_felt')"><span class="zh">不织布</span><span class="en">Felt</span></button>
+                <button onclick="scrollToCat('students', 'student_zine')"><span class="zh">zine</span><span class="en">Zine</span></button>
+                <button onclick="scrollToCat('students', 'student_sketch')"><span class="zh">速写</span><span class="en">Sketch</span></button>
+                <button onclick="scrollToCat('students', 'student_self')"><span class="zh">自画像</span><span class="en">Self-portrait</span></button>
+                <button onclick="scrollToCat('students', 'student_rubber')"><span class="zh">橡皮章</span><span class="en">Rubber Stamp</span></button>
+                <button onclick="scrollToCat('students', 'student_lino')"><span class="zh">胶板版画</span><span class="en">Linocut</span></button>
+                <button onclick="scrollToCat('students', 'student_cards')"><span class="zh">手工贺卡</span><span class="en">Handmade Cards</span></button>
+                <button onclick="scrollToCat('students', 'student_papercut')"><span class="zh">非遗剪纸·刻纸</span><span class="en">Paper Cutting</span></button>
+                <button onclick="scrollToCat('students', 'student_acrylic_creation')"><span class="zh">丙烯画创作</span><span class="en">Acrylic Painting Creation</span></button>
+                <button onclick="scrollToCat('students', 'student_others')"><span class="zh">其他</span><span class="en">Others</span></button>
+            </div>
+        </div>
+
+        <div class="lang-btn" onclick="toggleLang()">EN/中</div>
+    </div>
+</header>
+
+<main>
+    <div id="home" class="page active">
+        <div class="hero">
+            <h1 class="hero-title">AMY ART<br>PORTFOLIO</h1>
+            <div class="hero-subtitle"><span class="zh">天高任鸟飞，海阔凭鱼跃。</span><span class="en">The sky is the limit, the ocean is the stage.</span></div>
+            <div class="hero-btn" onclick="scrollToFeatured()"><span class="zh">探索精选作品 ↓</span><span class="en">Explore Featured ↓</span></div>
+        </div>
+        <div class="featured-section" id="featured-works">
+            <div class="featured-title"><span class="zh">精选作品集</span><span class="en">Featured Portfolio</span></div>
+            <div class="thumbnails" id="thumbnails-container"></div>
+            <div class="featured-grid" id="featured-grid-container"></div>
+        </div>
+    </div>
+
+    <div id="oil" class="page"><div class="page-content-wrapper" id="section-oil"></div></div>
+    <div id="cn" class="page"><div class="page-content-wrapper" id="section-cn"></div></div>
+    <div id="sketch_page" class="page"><div class="page-content-wrapper" id="section-sketch_page"></div></div>
+    <div id="watercolor" class="page"><div class="page-content-wrapper" id="section-watercolor"></div></div>
+    <div id="digital" class="page"><div class="page-content-wrapper" id="section-digital"></div></div>
+    <div id="others" class="page"><div class="page-content-wrapper" id="section-others"></div></div>
+    
+    <div id="portfolio" class="page">
+        <div class="page-content-wrapper">
+            <div class="cat-group">
+                <div class="cat-header"><span class="zh">沉浸式项目演示</span><span class="en">Immersive Project Demo</span></div>
+                <div class="ppt-slideshow" id="ppt-box" onclick="togglePPT(event)">
+                    <div id="ppt-imgs-container"></div>
+                    <div class="ppt-status-icon">⏸</div>
+                    <div class="ppt-info" id="ppt-counter">PLAYING | 1 / 30</div>
+                    <div class="ppt-nav-btn ppt-nav-left" onclick="manualPrevSlide(event)">‹</div>
+                    <div class="ppt-nav-btn ppt-nav-right" onclick="manualNextSlide(event)">›</div>
+                </div>
+            </div>
+            <div class="cat-group">
+                <div class="cat-header"><span class="zh">精选个人作品集</span><span class="en">Selected Personal Portfolio</span></div>
+                <div class="portfolio-grid" id="grid-portfolio"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="students" class="page"><div class="page-content-wrapper" id="section-students"></div></div>
+</main>
+
+<div id="lightbox" onclick="closeLB()">
+    <span class="lb-btn close-btn" onclick="closeLB()">&times;</span>
+    <div id="lb-container" onclick="event.stopPropagation()">
+        <div id="lb-media-area">
+            <span class="lb-btn prev-btn" onclick="changeImg(-1); event.stopPropagation();">&#10094;</span>
+            <span class="lb-btn next-btn" onclick="changeImg(1); event.stopPropagation();">&#10095;</span>
+            <div id="lb-content"></div>
+            
+            <div class="floating-action-bar">
+                <button class="float-btn" id="float-like-btn" onclick="toggleLike()">
+                    <span class="heart-icon">🤍</span>
+                    <span id="float-like-count">0</span>
+                </button>
+                <button class="float-btn" id="float-comment-btn" onclick="toggleCommentSection()">
+                    💬 <span class="zh">评论</span><span class="en">Comment</span>
+                </button>
+            </div>
+        </div>
+        
+        <div id="lb-interaction-panel">
+            <div class="comment-section">
+                <h3><span class="zh">评论交流</span><span class="en">Comments</span></h3>
+                <div id="comment-list"></div>
+                <form class="comment-form" onsubmit="submitComment(event)">
+                    <input type="text" id="comment-nickname" placeholder="Nickname" required>
+                    <textarea id="comment-text" placeholder="Leave a comment..." required></textarea>
+                    <button type="submit"><span class="zh">发表评论</span><span class="en">Post</span></button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button id="back-to-top" class="back-to-top" onclick="scrollToTop()" title="回到顶部">↑</button>
+
+<script>
+    // 🔒 修改点 1：全站简易访问密码锁
+    // 强制在页面加载任何图文前验证密码
+    (function() {
+        const accessPassword = prompt("提示：该网站为个人作品集，请输入访问密码：");
+        // 请将 "123456" 替换为你和朋友约定的专属暗号
+        if (accessPassword !== "qwert") { 
+            alert("密码错误，鉴权失败！");
+            document.body.innerHTML = `
+                <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:100vh; background:#0a0a0a; color:#888;">
+                    <h2 style="font-weight:300; letter-spacing:2px; color:#fff;">403 Forbidden</h2>
+                    <p style="font-size:0.9rem;">未授权的访问请求</p>
+                </div>
+            `;
+            throw new Error("Password authentication failed."); // 停止后续所有渲染
+        }
+    })();
+
+    // ☁️ 修改点 2：云端视频对象存储地址前缀
+    // 请将此处替换为你从腾讯云 COS 复制出的「存储桶访问域名」
+    // (注意结尾不要带斜杠 '/')，如果你把那10个视频直接传在云端存储桶的对应文件夹下即可
+    const CLOUD_VIDEO_BASE = "https://my-gallery3.oss-cn-beijing.aliyuncs.com";
+
+
+    // =======================================================
+    // 🎨 1/2：【尺寸(Size)】的具体配置表
+    // =======================================================
+    const artworkSizes = {
+        // --- 油画作品尺寸 ---
+        "oil_1": "120x120 cm",
+        "oil_2": "30x40 cm",
+        "oil_3": "60x80 cm",
+	    "oil_4": "40x50 cm",
+        "oil_5": "40x50 cm",
+        "oil_6": "100x120 cm",
+        "oil_7": "30x60 cm",
+        "oil_8": "60x30 cm",
+        "oil_9": "80x100 cm",
+        "oil_10": "40x50 cm",
+        "oil_11": "40x50 cm",
+        "oil_12": "120x120 cm",
+        "oil_13": "80x100 cm",
+        "oil_14": "120x120 cm",
+        "oil_15": "120x120 cm",
+        "oil_16": "50x60 cm",
+        "oil_17": "60x50 cm",
+        "oil_18": "50x60 cm",
+        "oil_19": "50x50 cm",
+        "oil_20": "50x60 cm",
+        "oil_21": "40x50 cm",
+        "oil_22": "40x50 cm",
+        "oil_23": "40x50 cm",
+        "oil_24": "40x50 cm",
+        "oil_25": "40x50 cm",
+        "oil_26": "40x50 cm",
+        "oil_27": "40x50 cm",
+        "oil_28": "40x50 cm",
+        "oil_29": "50x40 cm",
+        "oil_30": "40x50 cm",
+        "oil_31": "40x50 cm",
+        "oil_32": "40x50 cm",
+        "oil_33": "40x50 cm",
+        "oil_34": "40x50 cm",
+        "oil_35": "40x50 cm",
+        "oil_36": "40x50 cm",
+        "oil_37": "120x120 cm",
+        "oil_38": "40x50 cm",
+        "oil_39": "60x50 cm",
+        "oil_40": "60x50 cm",
+        "oil_41": "60x50 cm",
+        "oil_42": "60x50 cm",
+        "oil_43": "50x40 cm",
+        "oil_44": "50x40 cm",
+        "oil_45": "100x120 cm",
+        "oil_46": "100x120 cm",
+        "oil_47": "100x120 cm",
+        "oil_48": "50x40 cm",
+        "oil_49": "50x40 cm",
+        "oil_50": "50x40 cm",
+        "oil_51": "50x40 cm",
+        "oil_52": "50x40 cm",
+        "oil_53": "50x40 cm",
+        "oil_54": "60x50 cm",
+        "oil_55": "60x80 cm",
+        "oil_56": "60x80 cm",
+        "oil_57": "80x60 cm",
+        "oil_58": "120x80 cm",
+        "oil_59": "120x100 cm",
+        "oil_60": "120x120 cm",
+        "oil_61": "30x40 cm",
+        "oil_62": "60x50 cm",
+        "oil_63": "50x40 cm",
+        "oil_64": "50x40 cm",
+        "oil_65": "50x40 cm",
+        "oil_66": "60x50 cm",
+        "oil_67": "40x50 cm",
+        "oil_68": "50x40 cm",
+        "oil_69": "50x40 cm",
+        "oil_70": "60x50 cm",
+        "oil_71": "60x50 cm",
+        "oil_72": "60x60 cm",
+
+        // --- 国画作品尺寸 ---
+        "cn_1": "55x39 cm",
+        "cn_2": "138x69 cm",
+        "cn_3": "69x46 cm",
+        "cn_4": "138x69 cm ",
+        "cn_5": "138x69 cm",
+        "cn_6": "60x60 cm",
+        "cn_7": "33x33 cm ",
+        "cn_8": "33x33 cm ",
+        "cn_9": "33x33 cm ",
+        "cn_10": "33x33 cm ",
+        "cn_11": "33x33 cm",
+        "cn_12": "33x33 cm",
+        "cn_13": "33x33 cm",
+        "cn_14": "33x33 cm ",
+        "cn_15": "33x33 cm",
+        "cn_16": "33x33 cm",
+        "cn_17": "33x33 cm ",
+        "cn_18": "33x33 cm ",
+        "cn_19": "33x33 cm ",
+        "cn_20": "33x33 cm ",
+        "cn_21": "33x33 cm",
+        "cn_22": "33x33 cm",
+        "cn_23": "33x33 cm",
+        "cn_24": "33x33 cm ",
+        "cn_25": "33x33 cm",
+        "cn_26": "33x33 cm",
+        "cn_27": "33x33 cm ",
+        "cn_28": "33x33 cm ",
+        "cn_29": "33x33 cm ",
+        "cn_30": "33x33 cm ",
+        "cn_31": "33x33 cm",
+        "cn_32": "33x33 cm",
+        "cn_33": "33x33 cm",
+        "cn_34": "33x33 cm ",
+        "cn_35": "33x33 cm",
+        "cn_36": "33x33 cm",
+        "cn_37": "33x33 cm ",
+        "cn_38": "33x33 cm ",
+        "cn_39": "33x33 cm ",
+        "cn_40": "33x33 cm ",
+        "cn_41": "33x33 cm",
+        "cn_42": "33x33 cm",
+        "cn_43": "33x33 cm",
+        "cn_44": "33x33 cm ",
+        "cn_45": "33x33 cm",
+        "cn_46": "33x33 cm",
+        "cn_47": "33x33 cm ",
+        "cn_48": "33x33 cm ",
+        "cn_49": "33x33 cm ",
+        "cn_50": "33x33 cm ",
+        "cn_51": "33x33 cm",
+        "cn_52": "33x33 cm",
+        "cn_53": "33x33 cm",
+        "cn_54": "33x33 cm ",
+        "cn_55": "33x33 cm",
+        "cn_56": "33x33 cm",
+        "cn_57": "33x33 cm ",
+        "cn_58": "33x33 cm ",
+        "cn_59": "33x33 cm ",
+        "cn_60": "33x33 cm ",
+        "cn_61": "33x33 cm",
+        "cn_62": "33x33 cm",
+        "cn_63": "33x33 cm",
+        "cn_64": "33x33 cm ",
+        "cn_65": "33x33 cm",
+        "cn_66": "33x33 cm",
+        "cn_67": "33x33 cm ",
+        "cn_68": "33x33 cm ",
+        "cn_69": "33x33 cm ",
+        "cn_70": "33x33 cm ",
+
+       // --- 水彩、水粉、丙烯、素描 ---
+        "watercolor_1": "4K",
+        "watercolor_2": "4K",
+        "watercolor_3": "2K",
+	    "watercolor_4": "16K",
+        "watercolor_5": "16K",
+        "watercolor_6": "8K",
+	    "watercolor_7": "8K",
+	    "watercolor_8": "8K",
+        "watercolor_9": "16K",
+        "watercolor_10": "16K",
+	    "watercolor_11": "8K",
+        "watercolor_12": "8K",
+        "watercolor_13": "16K",
+	    "watercolor_14": "16K",
+        "watercolor_15": "16K",
+        "watercolor_16": "8K",
+	    "watercolor_17": "16K",
+	    "watercolor_18": "8K",
+        "watercolor_19": "8K",
+        "watercolor_20": "8K",
+	    "watercolor_21": "2K",
+        "watercolor_22": "8K",
+        "watercolor_23": "8K",
+	    "watercolor_24": "8K",
+        "watercolor_25": "16K",
+        "watercolor_26": "16K",
+	    "watercolor_27": "16K",
+	    "watercolor_28": "16K",
+        "watercolor_29": "16K",
+        "watercolor_30": "8K",
+	    "watercolor_31": "16K",
+        "watercolor_32": "16K",
+        "watercolor_33": "16K",
+	    "watercolor_34": "16K",
+        "watercolor_35": "16K",
+        "watercolor_36": "16K",
+
+	    "acrylic_1": "125x60 cm",
+	    "acrylic_2": "155x60 cm",
+        "acrylic_3": "80x100 cm",
+	    "acrylic_4": "80x100 cm",
+	    "acrylic_5": "60x80 cm",
+	    "acrylic_6": "60x80 cm",
+
+        "gouache_1": "4K",
+	    "gouache_2": "4K",
+	    "gouache_3": "4K",
+
+        "sketch_1": "4K",
+	    "sketch_2": "1K",
+	    "sketch_3": "1K",
+	    "sketch_4": "4K",
+	    "sketch_5": "4K",
+	    "sketch_6": "4K",
+	    "sketch_7": "4K",
+
+        // --- 👇 平面设计、板绘、课程作品 尺寸 ---
+        "design_1": "40x40 cm", 
+	    "design_2": "8K",
+	    "design_3": "8K ",
+	    "design_4": "8K ",
+	    "design_5": "20x20 cm",
+	    "design_6": "20x20 cm",
+	    "design_7": "20x20 cm",
+	    "design_8": "20x20 cm",
+        "design_9": "40x40 cm",
+	    "design_10": "40x40 cm",
+	    "design_11": "40x40 cm", 
+	    "design_12": "40x40 cm",
+	    "design_13": "40x40 cm ",
+	    "design_14": "40x40 cm",
+	    "design_15": "40x40 cm",
+	    "design_16": "40x40 cm",
+	    "design_17": "40x40 cm",
+	    "design_18": "40x40 cm",
+        "design_19": "40x40 cmx12",
+	    "design_20": "40x40 cm",
+
+        "digital_1": "A4",
+	    "digital_2": "A4",
+	    "digital_3": "A4",
+	    "digital_4": "A4",
+	    "digital_5": "A4",
+	    "digital_6": "A4",
+	    "digital_7": "A4",
+	    "digital_8": "A4",
+	    "digital_9": "A4",
+	    "digital_10": "A4",
+	    "digital_11": "A4",
+	    "digital_12": "A4",
+	    "digital_13": "A4",
+	    "digital_14": "A4",
+	    "digital_15": "A4",
+	    "digital_16": "A4",
+	    "digital_17": "A4",
+	    "digital_18": "A4",
+	    "digital_19": "A4",
+	    "digital_20": "2388x1668 px",
+	    "digital_21": "2388x1668 px",
+	    "digital_22": "2388x1668 px",
+	    "digital_33": "2388x1668 px",
+	    "digital_24": "2388x1668 px",
+	    "digital_25": "2388x1668 px",
+	    "digital_26": "2388x1668 px",
+	    "digital_27": "2388x1668 px",
+	    "digital_28": "2388x1668 px",
+	    "digital_29": "2388x1668 px",
+	    "digital_30": "2388x1668 px",
+	    "digital_31": "2388x1668 px",
+	    "digital_32": "A4",
+	    "digital_33": "A4",
+	    "digital_34": "A4",
+	    "digital_35": "A4",
+	    "digital_36": "A4",
+	    "digital_37": "A4",
+	    "digital_38": "A4",
+	    "digital_39": "A4",
+	    "digital_40": "A4",
+	    "digital_41": "A4",
+	    "digital_42": "A4",
+	    "digital_43": "A4",
+	    "digital_44": "A4",
+	    "digital_45": "A4",
+	    "digital_46": "A4",
+	    "digital_47": "A4",
+	    "digital_48": "A4",
+
+        "courses_1": "40x50 cm",
+	    "courses_2": "40x50 cm",
+	    "courses_3": "40x50 cm",
+	    "courses_4": "40x50 cm",
+	    "courses_5": "40x50 cm",
+	    "courses_6": "33x33 cm",
+	    "courses_7": "33x33 cm",
+	    "courses_8": "33x33 cm",
+	    "courses_9": "33x33 cm",
+	    "courses_10": "33x33 cm",
+	    "courses_11": "33x33 cm",
+	    "courses_12": "4K",
+	    "courses_13": "4K",
+	    "courses_14": "4K",
+	    "courses_15": "8Kx5",
+	    "courses_16": "4K",
+	    "courses_17": "4K",
+	    "courses_18": "4K",
+	    "courses_19": "4K",
+	    "courses_20": "A3",
+	    "courses_21": "A3",
+	    "courses_22": "A3",
+	    "courses_23": "A3",
+	    "courses_24": "A3",
+	    "courses_25": "A4",
+	    "courses_26": "A5",
+	    "courses_27": "A4",
+	    "courses_28": "A4",
+	    "courses_29": "A4",
+	    "courses_30": "A4",
+	    "courses_31": "A4",
+	    "courses_32": "A4",
+	    "courses_33": "A4",
+	    "courses_34": "A5",
+	    "courses_35": "A5",
+	    "courses_36": "A4",
+	    "courses_37": "A4x4",
+	    "courses_38": "A4",
+	    "courses_39": "A4",
+	    "courses_40": "A4",
+	    "courses_41": "A4",
+	    "courses_42": "A4",
+	    "courses_43": "A4",
+	    "courses_48": "8K",
+	    "courses_49": "50x50 cm",
+	    "courses_50": "8K",
+	    "courses_51": "8K",
+	    "courses_52": "40x40 cm",
+	    "courses_62": "50x40 cm",
+	    "courses_63": "50x40 cm",
+	    "courses_64": "50x40 cm",
+	    "courses_65": "50x40 cm",
+	    "courses_66": "50x40 cm",
+	    "courses_67": "50x40 cm",
+	    "courses_68": "50x40 cm",
+	    "courses_80": "A4",
+	    "courses_81": "A4",
+	    "courses_85": "8K",
+	    "courses_86": "8K",
+	    "courses_87": "8K",
+	    "courses_88": "8K",
+	    "courses_89": "8K",
+	    "courses_91": "A5",
+	    "courses_92": "A5",
+	    "courses_95": "A4",
+	    "courses_96": "A4",
+	    "courses_97": "A4",
+	    "courses_98": "A3",
+	    "courses_99": "A5",
+	    "courses_100": "A5",
+	    "courses_101": "8K",
+	    "courses_102": "8K",
+	    "courses_103": "16K",
+	    "courses_104": "8K",
+	    "courses_105": "16K",
+	    "courses_106": "8K",
+	    "courses_107": "8K",
+	    "courses_108": "8K",
+	    "courses_114": "35x35 cm",
+	    "courses_115": "25x25 cm",
+	    "courses_116": "20x20 cm",
+	    "courses_117": "35x35 cm",
+	    "courses_118": "25x25 cm",
+	    "courses_119": "35x22 cm",
+	    "courses_120": "20x15 cm",
+	    "courses_121": "30x20 cm",
+	    "courses_122": "20x20 cm",
+	    "courses_123": "25x15 cm",
+	    "courses_124": "25x25 cm",
+	    "courses_125": "120x100 cm",
+	    "courses_126": "120x100 cm",
+	    "courses_127": "120x120 cm",
+	    "courses_128": "120x120 cm",
+	    "courses_129": "120x100 cm"
+    };
+
+    // =======================================================
+    // 🎨 2/2：【手工作品(Craft)】的双语文字介绍配置表
+    // =======================================================
+    const artworkDescs = {
+        "craft_1": { zh: "作品名称：芍药\n材质：扭扭棒", en: "Title: Peony\nMaterial: Pipe cleaners" },
+        "craft_2": { zh: "作品名称：史迪仔\n材质：不织布，耗时5小时完成", en: "Title: Stitch\nMaterial: Non-woven fabric, 5h to complete" },
+        "craft_3": { zh: "作品名称：Judy\n材质：锡纸画", en: "Title: Judy\nMaterial: Aluminum foil art" },
+        "craft_4": { zh: "作品名称：Nick\n材质：锡纸画", en: "Title: Nick\nMaterial: Aluminum foil art" },
+        "craft_5": { zh: "作品名称：神奈川冲浪里\n材质：版画", en: "Title: The Great Wave off Kanagawa\nMaterial: Printmaking" },
+        "craft_6": { zh: "作品名称：作品合集\n材质：石塑黏土", en: "Title: Collection\nMaterial: Stone plastic clay" },
+        "craft_7": { zh: "作品名称：瓦猫\n材质：石塑黏土", en: "Title: Tile Cat\nMaterial: Stone plastic clay" },
+        "craft_8": { zh: "作品名称：山水\n材质：掐丝珐琅", en: "Title: Landscape\nMaterial: Cloisonné enamel" },
+        "craft_9": { zh: "作品名称：枫叶\n材质：掐丝珐琅", en: "Title: Maple Leaf\nMaterial: Cloisonné enamel" },
+        "craft_10": { zh: "作品名称：衍纸书签\n材质：衍纸技法", en: "Title: Quilling Bookmark\nMaterial: Paper quilling" },
+        "craft_11": { zh: "作品名称：仕女\n材质：热缩片", en: "Title: Court Lady\nMaterial: Shrink plastic" },
+        "craft_12": { zh: "作品名称：小桃\n材质：羊毛毡", en: "Title: Little Peach\nMaterial: Needle felting" },
+        "craft_13": { zh: "作品名称：刺球花\n材质：扭扭棒泡沫球", en: "Title: Pompom Flower\nMaterial: Pipe cleaner & foam ball" },
+        "craft_14": { zh: "作品名称：神奈川冲浪里8/8\n材质：版画", en: "Title: The Great Wave off Kanagawa 8/8\nMaterial: Printmaking" },
+        "craft_15": { zh: "作品名称：橡皮章阴刻/阳刻\n材质：橡皮章", en: "Title: Rubber Stamp Intaglio/Relief\nMaterial: Rubber stamp" },
+        "craft_16": { zh: "作品名称：套色字母\n材质：橡皮章", en: "Title: Color-separated letters\nMaterial: Rubber stamp" },
+        "craft_17": { zh: "作品名称：Snake\n材质：橡皮章", en: "Title: Snake\nMaterial: Rubber stamp" },
+        "craft_18": { zh: "作品名称：仕女舞蹈\n材质：剪纸", en: "Title: Dancing Lady\nMaterial: Paper cutting" },
+        "craft_19": { zh: "作品名称：花\n材质：剪纸", en: "Title: Flower\nMaterial: Paper cutting" },
+        "craft_20": { zh: "作品名称：蝴蝶\n材质：剪纸", en: "Title: Butterfly\nMaterial: Paper cutting" },
+        "craft_21": { zh: "作品名称：福禄寿\n材质：剪纸", en: "Title: Fu Lu Shou\nMaterial: Paper cutting" },
+        "craft_22": { zh: "作品名称：三层花\n材质：剪纸", en: "Title: Three-layered Flower\nMaterial: Paper cutting" },
+        "craft_23": { zh: "作品名称：马\n材质：锡纸画", en: "Title: Horse\nMaterial: Aluminum foil art" },
+        "craft_24": { zh: "作品名称：编织\n材质：衍纸条", en: "Title: Weaving\nMaterial: Quilling paper strips" },
+        "craft_25": { zh: "作品名称：粉色小煤球\n材质：扭扭棒", en: "Title: Pink Soot Sprite\nMaterial: Pipe cleaner" },
+        "craft_26": { zh: "作品名称：树叶冰箱贴\n材质：石塑粘土", en: "Title: Leaf Fridge Magnet\nMaterial: Stone plastic clay" },
+        "craft_27": { zh: "作品名称：花\n材质：干花制作", en: "Title: Flower\nMaterial: Dried flower craft" }
+    };
+
+    const scrollRevealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('scroll-reveal');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { rootMargin: "0px 0px -12% 0px" });
+
+    const featuredWorks = [
+        { img: "images/oil/oil_1.jpg", hdImg: "images/oil/oil_1.jpg", titleZh: "望", titleEn: "Gaze", subtitleZh: "Oil Painting, 2018", subtitleEn: "Oil Painting, 2018", descZh: "用各种大小的笔触，去探索前方可能会带来的困境或希望", descEn: "Using brushstrokes of various sizes to explore the potential dilemmas or hopes that lie ahead.", detailsZh: "材质：布面油画 | 尺寸：120x120cm", detailsEn: "Medium: Oil on canvas | Size: 120x120cm" },
+        { img: "images/oil/oil_33.jpg", hdImg: "images/oil/oil_33.jpg", titleZh: "海港", titleEn: "The Harbor", subtitleZh: "Oil Painting, 2013", subtitleEn: "Oil Painting, 2013", descZh: "莫奈风景作品临摹。", descEn: "A landscape copy of Claude Monet's artwork.", detailsZh: "材质：布面油画 | 尺寸：50x60cm", detailsEn: "Medium: Oil on linen | Size: 50x60cm" },
+        { img: "images/oil/oil_10.jpg", hdImg: "images/oil/oil_10.jpg", titleZh: "动·静", titleEn: "Motion & Stillness", subtitleZh: "Oil Painting, 2017", subtitleEn: "Oil Painting, 2017", descZh: "灵感来自于看完Peter Doig的画册。", descEn: "Inspired after browsing through Peter Doig's art book.", detailsZh: "材质：布面油画 | 尺寸：40x50cm", detailsEn: "Medium: Oil on board | Size: 40x50cm" },
+        { img: "images/oil/oil_61.jpg", hdImg: "images/oil/oil_61.jpg", titleZh: "小女孩", titleEn: "Little Girl", subtitleZh: "Oil Painting, 2024", subtitleEn: "Oil Painting, 2024", descZh: "临摹作品。", descEn: "A study/reproduction piece.", detailsZh: "材质：布面油画 | 尺寸：30x40cm", detailsEn: "Medium: Oil on canvas | Size: 30x40cm" },
+        { img: "images/watercolor/watercolor_2.jpg", hdImg: "images/watercolor/watercolor_2.jpg", titleZh: "橘猫", titleEn: "Ginger Cat", subtitleZh: "Watercolor, 2018", subtitleEn: "Watercolor, 2018", descZh: "用水彩的艺术形式，绘制了自己养的小猫。", descEn: "Painted my own pet kitten using the artistic medium of watercolor.", detailsZh: "材质：水彩纸 | 尺寸：4K", detailsEn: "Medium: Watercolor paper | Size: 4K" },
+        { img: "images/others/acrylic/acrylic_1.jpg", hdImg: "images/others/acrylic/acrylic_1.jpg", titleZh: "狂欢", titleEn: "Revelry", subtitleZh: "Acrylic, 2023", subtitleEn: "Acrylic, 2023", descZh: "泼洒技法，色彩浓郁。画面中不同色彩代表着不同的性格，大家共同构筑了整体", descEn: "Splashing technique with rich colors. The different colors in the painting represent different personalities, together constructing the whole piece.", detailsZh: "材质：布面丙烯 | 尺寸：60x120cm", detailsEn: "Medium: Acrylic on canvas | Size: 60x120cm" },
+        { img: "images/cn/cn_46.jpg", hdImg: "images/cn/cn_46.jpg", titleZh: "乱花渐欲迷人眼", titleEn: "Dazzling Blossoms", subtitleZh: "Chinese Painting, 2023", subtitleEn: "Chinese Painting, 2023", descZh: "我们总会遇到各种各样的诱惑，结果如何全部取决于你自己", descEn: "We always encounter various temptations; how things turn out depends entirely on yourself.", detailsZh: "材质：镜片 | 尺寸：34x138cm x4", detailsEn: "Medium: Rice paper | Size: 34x138cm x4" },
+	    { img: "images/cn/cn_1.jpg", hdImg: "images/cn/cn_1.jpg", titleZh: "簪花仕女之一", titleEn: "Court Ladies Adorning Their Hair with Flowers (Part I)", subtitleZh: "Chinese Painting, 2022", subtitleEn: "Chinese Painting, 2022", descZh: "工笔画，先是白描，接着罩染上色。", descEn: "Gongbi (fine-brush) painting; first outlining with fine lines, followed by layers of color washes.", detailsZh: "材质：宣纸、墨 | 尺寸：55x39cm", detailsEn: "Medium: Rice paper, ink | Size: 55x39cm" },
+        { img: "images/cn/cn_6.jpg", hdImg: "images/cn/cn_6.jpg", titleZh: "荷花", titleEn: "Lotus", subtitleZh: "Chinese Painting, 2023", subtitleEn: "Chinese Painting, 2023", descZh: "工笔花鸟，设色淡雅。", descEn: "Gongbi (fine-brush) flower-and-bird painting, with elegant and subtle coloring.", detailsZh: "材质：宣纸 | 尺寸：50x50cm", detailsEn: "Medium: Ink and color on silk | Size: 50x50cm" },
+        { img: "images/cn/cn_11.jpg", hdImg: "images/cn/cn_11.jpg", titleZh: "檐", titleEn: "The Eaves", subtitleZh: "Chinese Painting, 2024", subtitleEn: "Chinese Painting, 2024", descZh: "用镜片纸加上针管笔，通过水分的控制完成画面。", descEn: "Created using lens paper and a technical pen, completing the piece through precise moisture control.", detailsZh: "材质：镜片 | 尺寸：40x40cm", detailsEn: "Medium: Ink on paper | Size: 40x40cm" },
+	    { img: "images/digital/digital_4.jpg", hdImg: "images/digital/digital_4.jpg", titleZh: "数字插画 · 幻境", titleEn: "Digital Illustration · Dreamscape", subtitleZh: "Digital Art, 2023", subtitleEn: "Digital Art, 2023", descZh: "用拼贴探索超现实主义的色彩与形态，融合东方元素。", descEn: "Using collage to explore surreal colors and forms, blending Eastern elements.", detailsZh: "材质：Photoshop + 手绘板 | 尺寸：3000x4000px | 创作时间：2023", detailsEn: "Medium: Photoshop + Graphics Tablet | Size: 3000x4000px | Year: 2023" },
+        { img: "images/digital/digital_5.jpg", hdImg: "images/digital/digital_5.jpg", titleZh: "两小无猜", titleEn: "Childhood Sweethearts", subtitleZh: "Digital Art, 2024", subtitleEn: "Digital Art, 2024", descZh: "参考来自电影，在此基础上进行绘制，希望传达出轻松愉悦的感觉。", descEn: "Based on a movie reference and painted on top of it, aiming to convey a relaxed and pleasant feeling.", detailsZh: "材质：Photoshop + 手绘板 | 尺寸：2500x3500px", detailsEn: "Medium: Photoshop + Graphics Tablet | Size: 2500x3500px" },
+        { img: "images/digital/digital_6.jpg", hdImg: "images/digital/digital_6.jpg", titleZh: "都市", titleEn: "The Metropolis", subtitleZh: "Digital Art, 2023", subtitleEn: "Digital Art, 2023", descZh: "画面中的各种色彩和小元素的叠加，希望可以看到主人公生活的惬意。", descEn: "Through the overlay of various colors and tiny elements, I hope to show the coziness and comfort of the protagonist's life.", detailsZh: "材质：Photoshop + 手绘板+Procreate | 尺寸：4000x2250px", detailsEn: "Medium: Photoshop + Graphics Tablet + iPad Pro | Size: 4000x2250px" },
+        { img: "images/others/craft/craft_2.jpg", hdImg: "images/others/craft/craft_2.jpg", titleZh: "不织布 · 史迪仔", titleEn: "Felt · Stitch", subtitleZh: "Handicraft, 2023", subtitleEn: "Handicraft, 2023", descZh: "不织布玩偶，耗时5小时。", descEn: "Felt doll, took 5 hours.", detailsZh: "材质：不织布、填充棉 | 尺寸：25cm", detailsEn: "Medium: Felt, cotton stuffing | Size: 25cm" },
+        { img: "images/others/craft/craft_27.jpg", hdImg: "images/others/craft/craft_27.jpg", titleZh: "境", titleEn: "Realm", subtitleZh: "Handicraft, 2024", subtitleEn: "Handicraft, 2024", descZh: "首先制作干花，然后再用干花完成作品的拼贴。", descEn: "First making dried flowers, and then using them to complete the artwork collage.", detailsZh: "材质：干花、胶水 | 尺寸：A3", detailsEn: "Medium: Dried flowers, glue | Size: A3" }
+    ];
+    const featuredHdImages = featuredWorks.map(w => w.img);
+
+    const fullConfig = {
+        oil: [
+            { id: 'creation', zh: '风景·个人创作', en: 'Landscape Creation', dir: 'oil', prefix: 'oil', start: 1, end: 15 },
+            { id: 'yanmen', zh: '风景·写生·雁门关', en: 'Sketch - Yanmen Pass', dir: 'oil', prefix: 'oil', start: 16, end: 22 },
+            { id: 'lvliang', zh: '风景·写生·吕梁', en: 'Landscape Sketch - Lvliang', dir: 'oil', prefix: 'oil', start: 23, end: 31 },
+            { id: 'practice', zh: '风景·练习', en: 'Landscape Practice', dir: 'oil', prefix: 'oil', start: 32, end: 38 },
+            { id: 'figure_sketch', zh: '油画·人物·写生', en: 'Figure Sketch', dir: 'oil', prefix: 'oil', start: 39, end: 59 },
+            { id: 'figure_practice', zh: '油画·人物·练习', en: 'Figure Practice', dir: 'oil', prefix: 'oil', start: 60, end: 72 }
+        ],
+        cn: [
+            { id: 'gongbi', zh: '工笔·写意', en: 'Gongbi & Xieyi', dir: 'cn', prefix: 'cn', start: 1, end: 6 },
+            { id: 'lens_arch', zh: '镜片·建筑', en: 'Lens - Architecture', dir: 'cn', prefix: 'cn', start: 7, end: 22 },
+            { id: 'lens_flower', zh: '镜片·花卉', en: 'Lens - Flowers', dir: 'cn', prefix: 'cn', start: 23, end: 37 },
+            { id: 'lens_landscape', zh: '镜片·风景', en: 'Lens - Landscape', dir: 'cn', prefix: 'cn', start: 38, end: 54 },
+            { id: 'lens_figure', zh: '镜片·人物及其他', en: 'Lens - Figures & Others', dir: 'cn', prefix: 'cn', start: 55, end: 68 }
+        ],
+        sketch_page: [
+            { id: 'videos', zh: '速写视频', en: 'Sketch Videos', dir: 'quick', prefix: 'v', count: 7, isVideo: true },
+            { id: 'before2021', zh: '2021年之前', en: 'Before 2021', dir: 'quick', prefix: 'quick', start: 1, end: 36 },
+            { id: 'year2021', zh: '2021年', en: '2021', dir: 'quick', prefix: 'quick', start: 37, end: 174 },
+            { id: 'year2022', zh: '2022年', en: '2022', dir: 'quick', prefix: 'quick', start: 175, end: 263 },
+            { id: 'year2023', zh: '2023年及之后', en: '2023 & After', dir: 'quick', prefix: 'quick', start: 264, end: 274 }
+        ],
+        watercolor: [
+            { id: 'watercolor_all', zh: '水彩', en: 'All Watercolors', dir: 'watercolor', prefix: 'watercolor', start: 1, end: 17 }
+        ],
+        digital: [
+            { id: 'practice', zh: '练习', en: 'Practice', dir: 'digital', prefix: 'digital', start: 1, end: 19 },
+            { id: 'plants', zh: '写生·植物', en: 'Sketch - Plants', dir: 'digital', prefix: 'digital', start: 20, end: 33 },
+            { id: 'figures', zh: '写生·人物', en: 'Sketch - Figures', dir: 'digital', prefix: 'digital', start:34, end: 48 }
+        ],
+        others: [
+            { id: 'craft', zh: '手工作品', en: 'Handicrafts', dir: 'others/craft', prefix: 'craft', start: 1, end: 27 },
+            { id: 'acrylic', zh: '丙烯', en: 'Acrylic', dir: 'others/acrylic', prefix: 'acrylic', start: 1, end: 6 },
+            { id: 'gouache', zh: '水粉', en: 'Gouache', dir: 'others/gouache', prefix: 'gouache', start: 1, end: 3 },
+            { id: 'sketch', zh: '素描', en: 'Sketch', dir: 'others/sketch', prefix: 'sketch', start: 1, end: 7 },
+            { id: 'room', zh: '教室环创', en: 'Classroom Environment', dir: 'others/room', prefix: 'room', start: 1, end: 17 },
+            { id: 'design', zh: '平面设计', en: 'Graphic Design', dir: 'others/design', prefix: 'design', start: 1, end: 20 },
+            { id: 'exhibition', zh: '艺术展筹备', en: 'Art Exhibition 2024.12', isExhibition: true },
+            { id: 'texture', zh: '肌理纸', en: 'Texture', dir: 'others/texture', prefix: 'texture', start: 1, end: 78 }
+        ],
+        students: [
+            { id: 'student_oil', zh: '油画', en: 'Oil Painting', dir: 'students', prefix: 'students', start: 1, end: 5 },
+            { id: 'student_fabric', zh: '布艺拼贴', en: 'Fabric Collage', dir: 'students', prefix: 'students', start: 6, end: 11 },
+            { id: 'student_shanhai', zh: '山海经', en: 'Classic of Mountains & Seas', dir: 'students', prefix: 'students', list: [12,13,14,15,16,17,18,19,106,107] },
+            { id: 'student_seasons', zh: '四季风景之旅', en: '4 Seasons Landscape', dir: 'students', prefix: 'students', start: 20, end: 24 },
+            { id: 'student_facial', zh: '五官拼贴', en: 'Facial Collage', dir: 'students', prefix: 'students', start: 25, end: 30 },
+            { id: 'student_leaves', zh: '衍纸·编织', en: 'Leaf Collage', dir: 'students', list: [31,32,33,34,35,36,37,108] },
+		    { id: 'student_foil', zh: '锡纸画', en: 'Foil Art', dir: 'students', prefix: 'students', start: 38, end: 43 },
+            { id: 'student_claybottle', zh: '超轻粘土瓶子', en: 'Ultralight Clay Bottles', dir: 'students', prefix: 'students', start: 44, end: 47 },
+            { id: 'student_graffiti', zh: '涂鸦', en: 'Graffiti', dir: 'students', prefix: 'students', start: 48, end: 52 },
+            { id: 'student_stoneclay', zh: '石塑粘土', en: 'Stone Plastic Clay', dir: 'students', prefix: 'students', start: 53, end: 58 },
+            { id: 'student_pipe', zh: '扭扭棒', en: 'Pipe Cleaners', dir: 'students', prefix: 'students', start: 59, end: 61 },
+            { id: 'student_texture', zh: '肌理画·山与海', en: 'Texture Painting', dir: 'students', prefix: 'students', start: 62, end: 66 },
+            { id: 'student_color', zh: '色彩风景', en: 'Color Landscape', dir: 'students', prefix: 'students', start: 67, end: 68 },
+            { id: 'student_felt', zh: '不织布', en: 'Felt', dir: 'students', prefix: 'students', start: 69, end: 79 },
+            { id: 'student_zine', zh: 'zine', en: 'Zine', dir: 'students', prefix: 'students', start: 80, end: 81 },
+            { id: 'student_sketch', zh: '速写', en: 'Sketch', dir: 'students', prefix: 'students', start: 82, end: 83 },
+            { id: 'student_self', zh: '自画像', en: 'Self-portrait', dir: 'students', prefix: 'students', start: 84, end: 89 },
+            { id: 'student_rubber', zh: '橡皮章', en: 'Rubber Stamp', dir: 'students', prefix: 'students', start: 90, end: 94 },
+            { id: 'student_lino', zh: '胶板版画', en: 'Linocut', dir: 'students', prefix: 'students', start: 95, end: 97 },
+            { id: 'student_cards', zh: '手工贺卡', en: 'Handmade Cards', dir: 'students', prefix: 'students', start: 98, end: 105 },
+            { id: 'student_papercut', zh: '非遗剪纸·刻纸', en: 'Intangible Cultural Heritage Paper Cutting', dir: 'students', prefix: 'students', start: 114, end: 124 },
+            { id: 'student_acrylic_creation', zh: '丙烯画创作', en: 'Acrylic Painting Creation', dir: 'students', prefix: 'students', start: 125, end: 129 },
+            { id: 'student_others', zh: '其他', en: 'Others', dir: 'students', prefix: 'students', start: 109, end: 113 }
+        ],
+        portfolioCount: 30
+    };
+
+    let renderedPages = { portfolio: false, oil: false, cn: false, sketch_page: false, watercolor: false, digital: false, others: false, students: false };
+
+    function showPage(pageId, navLinkEl) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        const targetPage = document.getElementById(pageId);
+        if(targetPage) targetPage.classList.add('active');
+
+        document.querySelectorAll('.nav-right a').forEach(a => a.classList.remove('active'));
+        if (navLinkEl) navLinkEl.classList.add('active');
+        else {
+            const matchLink = document.querySelector(`.nav-right a[data-page="${pageId}"]`);
+            if (matchLink) matchLink.classList.add('active');
+        }
+
+        if (pageId === 'home' || pageId === 'portfolio') window.scrollTo({ top: 0 });
+        
+        updateHeaderStyle();
+
+        if (pageId !== 'home' && !renderedPages[pageId]) {
+            renderSingleGrid(pageId);
+            renderedPages[pageId] = true;
+        }
+        
+        document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+    }
+
+    function goToHome() { showPage('home', document.querySelector('.nav-right a[data-page="home"]')); }
+    function scrollToFeatured() { document.getElementById('featured-works').scrollIntoView({ behavior: 'smooth' }); }
+    function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+    function scrollToCat(pageId, catId) {
+        if (!renderedPages[pageId]) {
+            renderSingleGrid(pageId);
+            renderedPages[pageId] = true;
+        }
+        
+        showPage(pageId);
+
+        document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            menu.classList.add('force-hide');
+            setTimeout(() => menu.classList.remove('force-hide'), 500);
+        });
+
+        const target = document.getElementById(`cat-node-${pageId}-${catId}`);
+        if (!target) return;
+
+        let attempts = 0;
+        const MAX_ATTEMPTS = 20; 
+        let scrollInterval = null;
+        let stopDueToUser = false;
+
+        const stopScrollFix = () => {
+            if (scrollInterval) clearInterval(scrollInterval);
+            window.removeEventListener('touchstart', stopScrollFix);
+            window.removeEventListener('wheel', stopScrollFix);
+            stopDueToUser = true;
+        };
+
+        window.addEventListener('touchstart', stopScrollFix, { once: true });
+        window.addEventListener('wheel', stopScrollFix, { once: true });
+
+        const attemptScroll = () => {
+            if (stopDueToUser) return;
+            if (attempts >= MAX_ATTEMPTS) {
+                clearInterval(scrollInterval);
+                return;
+            }
+            
+            target.scrollIntoView({ behavior: 'auto', block: 'start' });
+            attempts++;
+            
+            const rect = target.getBoundingClientRect();
+            const expectedTop = window.innerWidth <= 800 ? 90 : 140; 
+            if (Math.abs(rect.top - expectedTop) <= 10) clearInterval(scrollInterval);
+        };
+
+        requestAnimationFrame(() => {
+            attemptScroll();
+            scrollInterval = setInterval(attemptScroll, 100);
+        });
+    }
+
+    function renderFeatured() {
+        const thumbContainer = document.getElementById('thumbnails-container');
+        const gridContainer = document.getElementById('featured-grid-container');
+        if(!thumbContainer || !gridContainer) return;
+
+        const isEn = document.body.classList.contains('lang-en');
+
+        let thumbHtml = '<div class="thumb-list">';
+        featuredWorks.forEach((work, idx) => {
+            thumbHtml += `<img src="${work.img}" class="thumb-item" onclick="scrollToItem(${idx})" alt="thumbnail">`;
+        });
+        thumbHtml += '</div>';
+        thumbContainer.innerHTML = thumbHtml;
+
+        let gridHtml = '';
+        featuredWorks.forEach((work, idx) => {
+            const title = isEn ? work.titleEn : work.titleZh;
+            const subtitle = isEn ? work.subtitleEn : work.subtitleZh;
+            const desc = isEn ? work.descEn : work.descZh;
+            const details = isEn ? work.detailsEn : work.detailsZh;
+            const detailLabel = isEn ? "📌 More Details" : "📌 更多细节";
+            const viewBtn = isEn ? "🔍 View Full Size" : "🔍 查看大图";
+            const reverseClass = (idx % 2 === 1) ? 'reverse' : '';
+
+            gridHtml += `
+                <div class="featured-item ${reverseClass}" id="featured-item-${idx}">
+                    <div class="featured-image" onclick="openFeaturedLB(${idx})">
+                        <img src="${work.img}" loading="lazy" decoding="async" alt="${title}">
+                    </div>
+                    <div class="featured-info">
+                        <h2>${title}</h2>
+                        <div class="sub">${subtitle}</div>
+                        <p>${desc}</p>
+                        <div class="detail-box">
+                            <h4>${detailLabel}</h4>
+                            <p>${details}</p>
+                        </div>
+                        <button class="btn-view" onclick="openFeaturedLB(${idx})">${viewBtn}</button>
+                    </div>
+                </div>
+            `;
+        });
+        gridContainer.innerHTML = gridHtml;
+    }
+
+    function scrollToItem(index) {
+        const target = document.getElementById(`featured-item-${index}`);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function toggleLang() {
+        document.body.classList.toggle('lang-en');
+        renderFeatured();
+    }
+
+    let currentGallery = [];
+    let currentIndex = 0;
+    let pptIdx = 0, pptTimer = null, pptPaused = false;
+    let portfolioTotalCount = 30; 
+    let currentWorkId = "";
+
+    function updateHeaderStyle() {
+        const header = document.querySelector('header');
+        const isHomeActive = document.getElementById('home').classList.contains('active');
+        const useWhite = isHomeActive && window.scrollY < 50;
+
+        if (useWhite) {
+            header.style.background = 'transparent';
+            header.style.boxShadow = 'none';
+            header.style.padding = '30px 6%';
+            header.querySelectorAll('.nav-link, .logo, .lang-btn').forEach(el => el.style.color = '#fff');
+            header.querySelector('.lang-btn').style.borderColor = '#fff';
+        } else {
+            header.style.background = 'rgba(255, 255, 255, 0.98)';
+            header.style.boxShadow = '0 1px 0px rgba(0,0,0,0.05)';
+            header.style.padding = '20px 6%';
+            header.querySelectorAll('.nav-link, .logo, .lang-btn').forEach(el => el.style.color = 'var(--accent)');
+            header.querySelector('.lang-btn').style.borderColor = 'var(--accent)';
+        }
+    }
+
+    function renderSingleGrid(pageId) {
+        const r = (id, html) => {
+            const el = document.getElementById(id);
+            if(el) el.innerHTML = html;
+        };
+
+        if (pageId === 'portfolio') {
+            let pfL = [];
+            for(let i=1; i<=fullConfig.portfolioCount; i++) pfL.push(`images/portfolio/portfolio_${i}.jpg`);
+            const pfLJoined = pfL.join('|');
+            r('grid-portfolio', pfL.map((m,i)=>`<div class="item-card"><div class="item-wrapper" tabindex="0" role="button" aria-label="查看作品大图" onclick="openLB(${i},'${pfLJoined}')" onkeydown="if(event.key==='Enter') this.click()"><img src="${m}" class="img-thumb" loading="lazy" decoding="async" alt="Portfolio Image ${i}" onload="this.classList.add('loaded')"></div></div>`).join(''));
+            
+            document.querySelectorAll(`#grid-portfolio .item-wrapper:not(.scroll-reveal)`).forEach(el => {
+                scrollRevealObserver.observe(el);
+            });
+            return;
+        }
+
+        const configSection = fullConfig[pageId];
+        if (!configSection) return;
+
+        let totalHtml = "";
+        configSection.forEach(c => {
+            let mediaItems = [];
+            let docsHtml = "";
+
+            if (c.isExhibition) {
+                const exhibitionLabelsZh = ["海报", "投票卡", "投票贴纸", "奖杯"];
+                const exhibitionLabelsEn = ["Poster", "Voting Card", "Voting Sticker", "Trophy"];
+                for(let i=1; i<=4; i++) {
+                    mediaItems.push({ type: 'img', src: `images/others/exhibition/img_${i}.jpg`, labelZh: exhibitionLabelsZh[i-1], labelEn: exhibitionLabelsEn[i-1] });
+                }
+                // ☁️ 修改点：将此处的单独视频地址指向云端
+                mediaItems.push({ type: 'video', src: `${CLOUD_VIDEO_BASE}/images/others/exhibition/video_1.mp4` });
+                docsHtml = `
+                    <div class="item-card"><a href="./images/others/exhibition/plan.docx" target="_blank" class="doc-card"><div class="doc-icon">📄</div><div class="doc-title"><span class="zh">艺术展活动方案</span><span class="en">Exhibition Plan</span></div><div class="doc-type"><span class="zh">Word 文档</span><span class="en">Word Document</span></div></a></div>
+		            <div class="item-card"><a href="./images/others/exhibition/word.docx" target="_blank" class="doc-card"><div class="doc-icon">📄</div><div class="doc-title"><span class="zh">艺术展初赛主持词</span><span class="en">Preliminary Script</span></div><div class="doc-type"><span class="zh">Word 文档</span><span class="en">Word Document</span></div></a></div>
+		            <div class="item-card"><a href="./images/others/exhibition/word_1.docx" target="_blank" class="doc-card"><div class="doc-icon">📄</div><div class="doc-title"><span class="zh">艺术展复赛主持词</span><span class="en">Semi-final Script</span></div><div class="doc-type"><span class="zh">Word 文档</span><span class="en">Word Document</span></div></a></div>
+                    <div class="item-card"><a href="./images/others/exhibition/budget.xlsx" target="_blank" class="doc-card"><div class="doc-icon">📊</div><div class="doc-title"><span class="zh">预算与物料表</span><span class="en">Budget & Materials</span></div><div class="doc-type"><span class="zh">Excel 表格</span><span class="en">Excel Sheet</span></div></a></div>
+                    <div class="item-card"><a href="./images/others/exhibition/exhibition.pdf" target="_blank" class="doc-card"><div class="doc-icon">📑</div><div class="doc-title"><span class="zh">展品介绍</span><span class="en">Exhibits Intro</span></div><div class="doc-type"><span class="zh">PDF 文件</span><span class="en">PDF File</span></div></a></div>
+                `;
+            } 
+            else if (c.list) {
+                c.list.forEach(num => {
+                    let itemSrc = pageId === 'students' ? `images/courses/courses_${num}.jpg` : `images/${c.dir}/${c.prefix}_${num}.${c.isVideo ? 'mp4' : 'jpg'}`;
+                    // ☁️ 修改点：将循环生成的视频地址指向云端
+                    if (c.isVideo) itemSrc = `${CLOUD_VIDEO_BASE}/${itemSrc}`;
+                    mediaItems.push({ type: c.isVideo ? 'video' : 'img', src: itemSrc });
+                });
+            } 
+            else if (c.start && c.end) {
+                for (let i = c.start; i <= c.end; i++) {
+                    let itemSrc = pageId === 'students' ? `images/courses/courses_${i}.jpg` : `images/${c.dir}/${c.prefix}_${i}.jpg`;
+                    mediaItems.push({ type: 'img', src: itemSrc });
+                }
+            }
+            else if (c.count) {
+                for (let i = 1; i <= c.count; i++) {
+                    let itemSrc = `images/${c.dir}/${c.prefix}_${i}.${c.isVideo ? 'mp4' : 'jpg'}`;
+                    // ☁️ 修改点：将循环生成的视频地址指向云端
+                    if (c.isVideo) itemSrc = `${CLOUD_VIDEO_BASE}/${itemSrc}`;
+                    mediaItems.push({ type: c.isVideo ? 'video' : 'img', src: itemSrc });
+                }
+            }
+
+            if (c.id === 'craft') {
+                // ☁️ 修改点：将此处的两段单独视频地址指向云端
+                mediaItems.unshift(
+                    { type: 'video', src: `${CLOUD_VIDEO_BASE}/images/others/craft/v_1.mp4` }, 
+                    { type: 'video', src: `${CLOUD_VIDEO_BASE}/images/others/craft/v_2.mp4` }
+                );
+            }
+
+            const lightboxUrls = mediaItems.map(m => m.src).join('|');
+
+            let itemsHtml = mediaItems.map((m, idx) => {
+                let mediaTag = "";
+                if (m.type === 'video') {
+                    // 🔒 修改点 3：增加防下载 (controlslist="nodownload") 和防右键 (oncontextmenu="return false;")
+                    mediaTag = `<video src="${m.src}#t=0.001" class="img-thumb" preload="metadata" muted playsinline controlslist="nodownload" oncontextmenu="return false;" onloadeddata="this.classList.add('loaded')"></video><div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:36px; color:rgba(255,255,255,0.95); pointer-events:none; z-index:10; text-shadow:0 4px 15px rgba(0,0,0,0.4);">▶</div>`;
+                } else {
+                    // 💡 注意：原代码的图片已经包含了 loading="lazy"，所以极其规范，不会引起卡顿！
+                    mediaTag = `<img src="${m.src}" class="img-thumb" loading="lazy" decoding="async" alt="Artwork" onload="this.classList.add('loaded')">`;
+                }
+
+                // ================== 判断显示何种悬浮信息 ==================
+                let sizeOverlayHtml = "";
+                
+                // 判断是否需要显示【尺寸】(包含油画、国画、水彩、板绘、课程作品、丙烯、水粉、素描、设计)
+                const isSizeCategory = (
+                    pageId === 'oil' || 
+                    pageId === 'cn' || 
+                    pageId === 'watercolor' ||
+                    pageId === 'digital' ||
+                    pageId === 'students' ||
+                    (pageId === 'others' && ['acrylic', 'gouache', 'sketch', 'design'].includes(c.id))
+                );
+
+                // 判断是否需要显示【文字介绍】(手工作品)
+                const isDescCategory = (pageId === 'others' && c.id === 'craft');
+
+                if (m.type !== 'video') {
+                    const fileNameMatch = m.src.match(/\/([^\/]+)\.(jpg|jpeg|png|gif|mp4)$/i);
+                    const imgKey = fileNameMatch ? fileNameMatch[1] : ""; 
+
+                    if (isSizeCategory) {
+                        const rawSize = artworkSizes[imgKey] || null;
+                        if (rawSize) {
+                            sizeOverlayHtml = `<div class="size-overlay"><span class="zh">尺寸: ${rawSize}</span><span class="en">Size: ${rawSize}</span></div>`;
+                        } else {
+                            sizeOverlayHtml = `<div class="size-overlay"><span class="zh">尺寸: 待完善</span><span class="en">Size: TBD</span></div>`;
+                        }
+                    } else if (isDescCategory) {
+                        const descObj = artworkDescs[imgKey] || { zh: "作品介绍待完善...", en: "Description to be added..." };
+                        sizeOverlayHtml = `<div class="size-overlay" style="white-space: pre-wrap;"><span class="zh">${descObj.zh}</span><span class="en">${descObj.en}</span></div>`;
+                    }
+                }
+
+                let labelHtml = m.labelZh ? `<div class="item-info" style="text-align: center; padding-top: 10px;"><strong><span class="zh">${m.labelZh}</span><span class="en">${m.labelEn}</span></strong></div>` : "";
+                return `<div class="item-card"><div class="item-wrapper" tabindex="0" role="button" aria-label="查看作品大图" onclick="openLB(${idx},'${lightboxUrls}')" onkeydown="if(event.key==='Enter') this.click()">${mediaTag}${sizeOverlayHtml}</div>${labelHtml}</div>`;
+            }).join('');
+
+            itemsHtml += docsHtml;
+            let itemCount = mediaItems.length + (c.isExhibition ? 3 : 0);
+            let sparseClass = (itemCount > 0 && itemCount < 8) ? " sparse-grid" : "";
+            totalHtml += `<div class="cat-group" id="cat-node-${pageId}-${c.id}"><div class="cat-header"><span class="zh">${c.zh}</span><span class="en">${c.en}</span></div><div class="digital-masonry${sparseClass}">${itemsHtml}</div></div>`;
+        });
+
+        r(`section-${pageId}`, totalHtml);
+
+        document.querySelectorAll(`#section-${pageId} .item-wrapper:not(.scroll-reveal)`).forEach(el => {
+            scrollRevealObserver.observe(el);
+        });
+    }
+
+    function updateSlideByIndex(newIndex) { const imgs = document.querySelectorAll('#ppt-imgs-container img'); if (!imgs.length) return; imgs[pptIdx].classList.remove('active'); pptIdx = (newIndex + imgs.length) % imgs.length; imgs[pptIdx].classList.add('active'); updatePPTCounter(); }
+    
+    function resetAutoTimer() { 
+        if (pptTimer) { clearInterval(pptTimer); pptTimer = null; } 
+        if (!pptPaused) { 
+            pptTimer = setInterval(() => { 
+                const imgs = document.querySelectorAll('#ppt-imgs-container img'); 
+                if (!imgs.length) return; 
+                imgs[pptIdx].classList.remove('active'); 
+                pptIdx = (pptIdx + 1) % imgs.length; 
+                imgs[pptIdx].classList.add('active'); 
+                updatePPTCounter(); 
+            }, 4000); 
+        } 
+    }
+    
+    function manualPrevSlide(e) { if (e) e.stopPropagation(); updateSlideByIndex(pptIdx - 1); resetAutoTimer(); }
+    function manualNextSlide(e) { if (e) e.stopPropagation(); updateSlideByIndex(pptIdx + 1); resetAutoTimer(); }
+    
+    function togglePPT(event) { 
+        if (event && event.target && (event.target.classList.contains('ppt-nav-btn') || event.target.closest('.ppt-nav-btn'))) return; 
+        const box = document.getElementById('ppt-box'); 
+        if (pptPaused) { 
+            pptPaused = false; box.classList.remove('is-paused'); resetAutoTimer(); 
+        } else { 
+            pptPaused = true; if (pptTimer) { clearInterval(pptTimer); pptTimer = null; } box.classList.add('is-paused'); 
+        } 
+        updatePPTCounter(); 
+    }
+    
+    function updatePPTCounter() { const ctr = document.getElementById('ppt-counter'); if(ctr) ctr.innerText = `${pptPaused ? 'PAUSED' : 'PLAYING'} | ${pptIdx + 1} / ${portfolioTotalCount}`; }
+    
+    function initPPT() {
+        let html = "";
+        for (let i = 1; i <= portfolioTotalCount; i++) {
+            if (i <= 3) { html += `<img src="images/portfolio/portfolio_${i}.jpg" class="${i === 1 ? 'active' : ''}">`; } 
+            else { html += `<img data-src="images/portfolio/portfolio_${i}.jpg" class="">`; }
+        }
+        const container = document.getElementById('ppt-imgs-container');
+        if(container) {
+            container.innerHTML = html;
+            pptIdx = 0; pptPaused = false;
+            resetAutoTimer();
+            updatePPTCounter();
+            document.getElementById('ppt-box')?.classList.remove('is-paused');
+            setTimeout(() => {
+                const lazyImgs = document.querySelectorAll('#ppt-imgs-container img[data-src]');
+                lazyImgs.forEach(img => { img.setAttribute('src', img.getAttribute('data-src')); img.removeAttribute('data-src'); });
+            }, 1500);
+        }
+    }
+
+    let lbScale = 1;
+    let lbTranslateX = 0;
+    let lbTranslateY = 0;
+    let isDraggingImg = false;
+    let startImgX = 0, startImgY = 0;
+    let lastPinchDist = 0;
+
+    function applyZoom() {
+        const target = document.getElementById('lb-target');
+        if (target) {
+            target.style.transform = `translate(${lbTranslateX}px, ${lbTranslateY}px) scale(${lbScale})`;
+            if(lbScale > 1) target.style.cursor = isDraggingImg ? 'grabbing' : 'grab';
+            else target.style.cursor = 'auto';
+        }
+    }
+
+    function resetZoom() {
+        lbScale = 1; lbTranslateX = 0; lbTranslateY = 0; isDraggingImg = false;
+        applyZoom();
+    }
+
+    function openFeaturedLB(index) { currentGallery = featuredHdImages.slice(); currentIndex = index; showLightbox(); updateLBImage(); }
+    function openLB(i, g) { currentGallery = g.split('|'); currentIndex = i; showLightbox(); updateLBImage(); }
+    function showLightbox() { document.getElementById('lightbox').style.display = 'flex'; document.body.classList.add('lightbox-open'); document.getElementById('lb-container').scrollTop = 0; }
+    
+    function updateLBImage() { 
+        resetZoom(); 
+        const currentImgUrl = currentGallery[currentIndex]; 
+        const c = document.getElementById('lb-content'); 
+        const isVideo = currentImgUrl.toLowerCase().endsWith('.mp4') || currentImgUrl.toLowerCase().endsWith('.mov'); 
+        if (isVideo) { 
+            // 🔒 修改点 4：弹窗播放器同样增加防下载防右键
+            c.innerHTML = `<video src="${currentImgUrl}" id="lb-target" style="cursor:auto; outline:none;" controls autoplay playsinline controlslist="nodownload" disablepictureinpicture oncontextmenu="return false;"></video>`; 
+        } else { 
+            c.innerHTML = `<img src="${currentImgUrl}" id="lb-target" alt="Enlarged Artwork">`; 
+        } 
+        
+        // 隐藏评论区
+        document.getElementById('lb-interaction-panel').style.display = 'none';
+
+        const urlParts = currentImgUrl.split('/'); 
+        const fileName = urlParts[urlParts.length - 1] || "unknown"; 
+        const folderName = urlParts[urlParts.length - 2] || "folder"; 
+        currentWorkId = `${folderName}-${fileName.replace(/\.(jpg|jpeg|png|gif|mp4|mov)$/i, '')}`; 
+        loadInteractionData(currentWorkId); 
+    }
+    
+    function getInteractionData(workId) { let data = localStorage.getItem(`amy_art_v2_${workId}`); if (data) return JSON.parse(data); return { likes: 0, likedByMe: false, comments: [] }; }
+    
+    function loadInteractionData(workId) { 
+        const data = getInteractionData(workId); 
+        const likeCount = document.getElementById('float-like-count'); 
+        likeCount.innerText = data.likes; 
+        const likeBtn = document.getElementById('float-like-btn'); 
+        if (data.likedByMe) { 
+            likeBtn.classList.add('liked'); 
+            likeBtn.querySelector('.heart-icon').innerText = "❤️"; 
+        } else { 
+            likeBtn.classList.remove('liked'); 
+            likeBtn.querySelector('.heart-icon').innerText = "🤍"; 
+        } 
+        const commentList = document.getElementById('comment-list'); 
+        commentList.innerHTML = data.comments.length ? data.comments.map(c => `<div class="comment-item"><strong>${escapeHtml(c.nickname)}</strong><span class="comment-text">${escapeHtml(c.text)}</span><span class="comment-time">${c.time}</span></div>`).join('') : '<div style="color:#666; text-align:center; padding:30px 0;"><span class="zh">暂无评论~</span><span class="en">No comments yet~</span></div>'; 
+    }
+    
+    function toggleLike() { const data = getInteractionData(currentWorkId); if (data.likedByMe) { data.likes = Math.max(0, data.likes - 1); data.likedByMe = false; } else { data.likes += 1; data.likedByMe = true; } localStorage.setItem(`amy_art_v2_${currentWorkId}`, JSON.stringify(data)); loadInteractionData(currentWorkId); }
+    
+    function submitComment(e) { e.preventDefault(); const nickname = document.getElementById('comment-nickname').value.trim(); const text = document.getElementById('comment-text').value.trim(); if(!nickname || !text) return; const data = getInteractionData(currentWorkId); const now = new Date(); const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`; data.comments.push({ nickname, text, time: timeStr }); localStorage.setItem(`amy_art_v2_${currentWorkId}`, JSON.stringify(data)); document.getElementById('comment-text').value = ""; loadInteractionData(currentWorkId); }
+    
+    // ================== 控制评论区展开与滚动 ==================
+    function toggleCommentSection() {
+        const panel = document.getElementById('lb-interaction-panel');
+        if(panel.style.display === 'none' || panel.style.display === '') {
+            panel.style.display = 'flex';
+            // 展开后平滑向下滚动，展示评论区
+            setTimeout(() => {
+                document.getElementById('lb-container').scrollBy({
+                    top: panel.offsetTop, 
+                    behavior: 'smooth'
+                });
+            }, 50);
+        } else {
+            panel.style.display = 'none';
+        }
+    }
+
+    function escapeHtml(str) { return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
+    function changeImg(dir) { if(currentGallery.length <= 1) return; currentIndex = (currentIndex + dir + currentGallery.length) % currentGallery.length; updateLBImage(); }
+    function closeLB() { document.getElementById('lightbox').style.display = 'none'; document.body.classList.remove('lightbox-open'); document.getElementById('lb-content').innerHTML = ""; const videoElement = document.querySelector('#lb-content video'); if(videoElement) { videoElement.pause(); videoElement.removeAttribute('src'); videoElement.load(); } }
+    function initMobileMenu() { const dropdowns = document.querySelectorAll('.dropdown'); dropdowns.forEach(drop => { const link = drop.querySelector('.nav-link'); if(link) { link.addEventListener('click', (e) => { if (window.innerWidth > 800) return; e.preventDefault(); e.stopPropagation(); dropdowns.forEach(d => { if(d !== drop) d.classList.remove('open'); }); drop.classList.toggle('open'); }); } }); document.addEventListener('click',(e) => { if(!e.target.closest('.dropdown')) document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open')); }); }
+    
+    function initCustomCursor() { 
+        const cursor = document.getElementById('custom-cursor'); 
+        if (!cursor) return; 
+        document.addEventListener('mousemove', (e) => { 
+            requestAnimationFrame(() => {
+                cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
+            });
+        }); 
+        document.body.addEventListener('mouseenter', (e) => { if (e.target.matches && (e.target.matches('a') || e.target.closest('.item-wrapper') || e.target.closest('.doc-card') || e.target.matches('button') || e.target.matches('.thumb-item') || e.target.closest('.ppt-nav-btn')) ) { cursor.classList.add('hovering'); } }, true); 
+        document.body.addEventListener('mouseleave', (e) => { if (e.target.matches && (e.target.matches('a') || e.target.closest('.item-wrapper') || e.target.closest('.doc-card') || e.target.matches('button') || e.target.matches('.thumb-item') || e.target.closest('.ppt-nav-btn')) ) { cursor.classList.remove('hovering'); } }, true); 
+    }
+
+    function initLightboxZoomEvents() {
+        const lbArea = document.getElementById('lb-media-area');
+        
+        lbArea.addEventListener('wheel', (e) => {
+            if(e.target.closest('.lb-btn') || e.target.closest('.floating-action-bar') || document.getElementById('lightbox').style.display === 'none') return;
+            e.preventDefault(); 
+            lbScale += e.deltaY * -0.0015;
+            lbScale = Math.min(Math.max(0.3, lbScale), 5); 
+            applyZoom();
+        }, {passive: false});
+
+        lbArea.addEventListener('mousedown', e => {
+            if(e.target.closest('.lb-btn') || e.target.closest('.floating-action-bar') || lbScale <= 1) return; 
+            isDraggingImg = true;
+            startImgX = e.clientX - lbTranslateX;
+            startImgY = e.clientY - lbTranslateY;
+            applyZoom();
+        });
+        window.addEventListener('mousemove', e => {
+            if(!isDraggingImg) return;
+            lbTranslateX = e.clientX - startImgX;
+            lbTranslateY = e.clientY - startImgY;
+            applyZoom();
+        });
+        window.addEventListener('mouseup', () => { 
+            isDraggingImg = false; 
+            applyZoom(); 
+        });
+
+        lbArea.addEventListener('touchstart', e => {
+            if(e.target.closest('.lb-btn') || e.target.closest('.floating-action-bar')) return;
+            if(e.touches.length === 1 && lbScale > 1) {
+                isDraggingImg = true;
+                startImgX = e.touches[0].clientX - lbTranslateX;
+                startImgY = e.touches[0].clientY - lbTranslateY;
+            } else if(e.touches.length === 2) {
+                isDraggingImg = false;
+                lastPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+            }
+        }, {passive: false});
+
+        lbArea.addEventListener('touchmove', e => {
+            if(e.target.closest('.lb-btn') || e.target.closest('.floating-action-bar')) return;
+            if(e.touches.length === 2) {
+                e.preventDefault(); 
+                let dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+                lbScale *= (dist / lastPinchDist);
+                lbScale = Math.min(Math.max(0.3, lbScale), 5); 
+                lastPinchDist = dist;
+                applyZoom();
+            } else if(e.touches.length === 1 && isDraggingImg && lbScale > 1) {
+                e.preventDefault();
+                lbTranslateX = e.touches[0].clientX - startImgX;
+                lbTranslateY = e.touches[0].clientY - startImgY;
+                applyZoom();
+            }
+        }, {passive: false});
+
+        lbArea.addEventListener('touchend', e => {
+            isDraggingImg = false;
+            if(e.touches.length === 1 && lbScale > 1) {
+                isDraggingImg = true;
+                startImgX = e.touches[0].clientX - lbTranslateX;
+                startImgY = e.touches[0].clientY - lbTranslateY;
+            }
+            applyZoom();
+        });
+    }
+
+    window.onload = () => {
+        renderFeatured();
+        initPPT();
+        updateHeaderStyle();
+        initMobileMenu();
+        initCustomCursor();
+        initLightboxZoomEvents();
+    };
+
+    let scrollTicking = false;
+    window.addEventListener('scroll', () => {
+        if (!scrollTicking) {
+            window.requestAnimationFrame(() => {
+                updateHeaderStyle();
+                
+                const backToTopBtn = document.getElementById('back-to-top');
+                if (window.scrollY > 500) backToTopBtn.classList.add('show');
+                else backToTopBtn.classList.remove('show');
+
+                document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open')); 
+                document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.add('force-hide')); 
+                clearTimeout(window.hoverRestoreTimer);
+                window.hoverRestoreTimer = setTimeout(() => { document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('force-hide')); }, 300);
+                
+                scrollTicking = false;
+            });
+            scrollTicking = true;
+        }
+    }, { passive: true });
+</script>
+</body>
+</html>
