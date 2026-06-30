@@ -357,22 +357,12 @@
         body.lang-en .en { display: inline-block; }
 
         @media (max-width: 1200px) { .digital-masonry { column-count: 3; column-gap: 20px; } .featured-item { gap: 40px; } .featured-info h2 { font-size: 1.8rem; } }
-        
-        /* ================== 📱 移动端全面优化 ================== */
         @media (max-width: 800px) {
-            /* 1. Header 与导航栏：禁止换行，改为丝滑的横向滚动，彻底杜绝下拉菜单高度塌陷或挤压的情况 */
-            header { padding: 15px 6% !important; flex-wrap: nowrap; align-items: center; }   
-            .logo { font-size: 16px; letter-spacing: 1.5px; margin-right: 15px; flex-shrink: 0; }
-            .nav-right { 
-                gap: 15px; flex: 1 1 auto; justify-content: flex-start; 
-                flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden;
-                -webkit-overflow-scrolling: touch; scrollbar-width: none; 
-                padding-bottom: 2px; align-items: center;
-            }
-            .nav-right::-webkit-scrollbar { display: none; } /* 隐藏移动端滚动条 */
-            .nav-right a { font-size: 13px; flex-shrink: 0; padding: 4px 0; }
-            .lang-btn { padding: 4px 8px; font-size: 12px; margin-left: 0; }
-            
+            header { padding: 20px 5%; }   
+            .logo { font-size: 16px; letter-spacing: 1.5px; }
+            .nav-right { gap: 10px; flex: 1 1 auto; justify-content: flex-end; }
+            .nav-right a { font-size: 12px; flex-shrink: 0; }
+            .lang-btn { padding: 2px 6px; font-size: 11px; }
             .digital-masonry { column-count: 2; column-gap: 16px; }
             .item-card { margin-bottom: 16px; }
             .item-info { padding: 10px 2px; font-size: 12px; }
@@ -387,27 +377,11 @@
             .featured-info .sub { margin-bottom: 15px; }
             .featured-info p { font-size: 0.95rem; margin-bottom: 20px; }
             .detail-box { padding: 0 0 0 15px; margin: 20px 0; }
-            
-            /* 2. 下拉菜单（重点修复区域） */
-            .dropdown { position: static; flex-shrink: 0; }
-            .dropdown-menu { 
-                position: absolute; top: 100%; 
-                /* 关键修复：精确覆盖整个屏幕的宽度，彻底杜绝“左侧侧边栏叠在右侧占位块上方”的错误观感 */
-                left: -6vw; width: 100vw; max-width: 100vw; 
-                /* 关键修复：加长下拉框高度并保留底部呼吸空间，杜绝“底部被截断/遮挡” */
-                max-height: 65vh; padding: 10px 0 25px 0; 
-                
-                overflow-y: auto; transform: none; opacity: 0; pointer-events: none; display: none; 
-                background: rgba(255, 255, 255, 0.98); box-shadow: 0 15px 35px rgba(0,0,0,0.12); 
-                margin-top: 0; z-index: 1100; border-top: 1px solid #eee;
-            }
-            .dropdown-menu button { 
-                white-space: normal; text-align: center; padding: 16px 20px; 
-                font-size: 14px; border-bottom: 1px solid rgba(0,0,0,0.04); 
-            }
+            .dropdown { position: static; flex-shrink: 1; }
+            .dropdown-menu { position: absolute; top: 100%; left: 0; width: 100%; max-width: none; max-height: 60vh; transform: none; opacity: 0; pointer-events: none; display: none; background: rgba(255, 255, 255, 0.98); box-shadow: 0 10px 30px rgba(0,0,0,0.08); margin-top: 0; padding: 4px 0; z-index: 1100; }
+            .dropdown-menu button { white-space: normal; text-align: center; padding: 14px 16px; font-size: 13px; border-bottom: 1px solid rgba(0,0,0,0.04); }
             .dropdown-menu button:last-child { border-bottom: none; }
             .dropdown.open .dropdown-menu { display: block; opacity: 1; pointer-events: auto; }
-            
             .lb-btn { width: 40px; height: 40px; font-size: 18px; }
             .close-btn { top: 15px; right: 15px; }
             .prev-btn { left: 10px; }
@@ -625,10 +599,7 @@
     // ☁️ 修改点 2：云端视频对象存储地址前缀
     const CLOUD_VIDEO_BASE = "https://my-gallery3.oss-cn-beijing.aliyuncs.com";
 
-
-    // =======================================================
     // 🎨 1/2：【尺寸(Size)】的具体配置表
-    // =======================================================
     const artworkSizes = {
         // --- 油画作品尺寸 ---
         "oil_1": "120x120 cm",
@@ -1000,9 +971,7 @@
 	    "courses_129": "120x100 cm"
     };
 
-    // =======================================================
     // 🎨 2/2：【手工作品(Craft)】的双语文字介绍配置表
-    // =======================================================
     const artworkDescs = {
         "craft_1": { zh: "作品名称：芍药\n材质：扭扭棒", en: "Title: Peony\nMaterial: Pipe cleaners" },
         "craft_2": { zh: "作品名称：史迪仔\n材质：不织布，耗时5小时完成", en: "Title: Stitch\nMaterial: Non-woven fabric, 5h to complete" },
@@ -1282,13 +1251,13 @@
         if (useWhite) {
             header.style.background = 'transparent';
             header.style.boxShadow = 'none';
-            if(window.innerWidth > 800) header.style.padding = '30px 6%';
+            header.style.padding = '30px 6%';
             header.querySelectorAll('.nav-link, .logo, .lang-btn').forEach(el => el.style.color = '#fff');
             header.querySelector('.lang-btn').style.borderColor = '#fff';
         } else {
             header.style.background = 'rgba(255, 255, 255, 0.98)';
             header.style.boxShadow = '0 1px 0px rgba(0,0,0,0.05)';
-            if(window.innerWidth > 800) header.style.padding = '20px 6%';
+            header.style.padding = '20px 6%';
             header.querySelectorAll('.nav-link, .logo, .lang-btn').forEach(el => el.style.color = 'var(--accent)');
             header.querySelector('.lang-btn').style.borderColor = 'var(--accent)';
         }
@@ -1359,347 +1328,156 @@
                 }
             }
 
-            if (c.id === 'craft') {
-                // ☁️ 修改点：将此处的两段单独视频地址指向云端
-                mediaItems.unshift(
-                    { type: 'video', src: `${CLOUD_VIDEO_BASE}/images/others/craft/v_1.mp4` }, 
-                    { type: 'video', src: `${CLOUD_VIDEO_BASE}/images/others/craft/v_2.mp4` }
-                );
-            }
-
-            const lightboxUrls = mediaItems.map(m => m.src).join('|');
-
-            let itemsHtml = mediaItems.map((m, idx) => {
-                let mediaTag = "";
-                if (m.type === 'video') {
-                    // 🔒 修改点 3：增加防下载 (controlslist="nodownload") 和防右键 (oncontextmenu="return false;")
-                    mediaTag = `<video src="${m.src}#t=0.001" class="img-thumb" preload="metadata" muted playsinline controlslist="nodownload" oncontextmenu="return false;" onloadeddata="this.classList.add('loaded')"></video><div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:36px; color:rgba(255,255,255,0.95); pointer-events:none; z-index:10; text-shadow:0 4px 15px rgba(0,0,0,0.4);">▶</div>`;
-                } else {
-                    // 💡 注意：原代码的图片已经包含了 loading="lazy"，所以极其规范，不会引起卡顿！
-                    mediaTag = `<img src="${m.src}" class="img-thumb" loading="lazy" decoding="async" alt="Artwork" onload="this.classList.add('loaded')">`;
-                }
-
-                // ================== 判断显示何种悬浮信息 ==================
-                let sizeOverlayHtml = "";
+            // ☁️ 修改点：补全并渲染每个类别的 HTML
+            let catHtml = `<div class="cat-group" id="cat-node-${pageId}-${c.id}">
+                <div class="cat-header"><span class="zh">${c.zh}</span><span class="en">${c.en}</span></div>
+                <div class="digital-masonry ${c.isVideo ? '' : 'sparse-grid'}">
+                    ${docsHtml}
+            `;
+            
+            const urls = mediaItems.map(m => m.src).join('|');
+            mediaItems.forEach((m, idx) => {
+                let fileName = m.src.split('/').pop().split('.')[0];
+                let sizeText = artworkSizes[fileName] ? artworkSizes[fileName] : '';
+                let descData = artworkDescs[fileName];
                 
-                // 判断是否需要显示【尺寸】(包含油画、国画、水彩、板绘、课程作品、丙烯、水粉、素描、设计)
-                const isSizeCategory = (
-                    pageId === 'oil' || 
-                    pageId === 'cn' || 
-                    pageId === 'watercolor' ||
-                    pageId === 'digital' ||
-                    pageId === 'students' ||
-                    (pageId === 'others' && ['acrylic', 'gouache', 'sketch', 'design'].includes(c.id))
-                );
-
-                // 判断是否需要显示【文字介绍】(手工作品)
-                const isDescCategory = (pageId === 'others' && c.id === 'craft');
-
-                if (m.type !== 'video') {
-                    const fileNameMatch = m.src.match(/\/([^\/]+)\.(jpg|jpeg|png|gif|mp4)$/i);
-                    const imgKey = fileNameMatch ? fileNameMatch[1] : ""; 
-
-                    if (isSizeCategory) {
-                        const rawSize = artworkSizes[imgKey] || null;
-                        if (rawSize) {
-                            sizeOverlayHtml = `<div class="size-overlay"><span class="zh">尺寸: ${rawSize}</span><span class="en">Size: ${rawSize}</span></div>`;
-                        } else {
-                            sizeOverlayHtml = `<div class="size-overlay"><span class="zh">尺寸: 待完善</span><span class="en">Size: TBD</span></div>`;
-                        }
-                    } else if (isDescCategory) {
-                        const descObj = artworkDescs[imgKey] || { zh: "作品介绍待完善...", en: "Description to be added..." };
-                        sizeOverlayHtml = `<div class="size-overlay" style="white-space: pre-wrap;"><span class="zh">${descObj.zh}</span><span class="en">${descObj.en}</span></div>`;
-                    }
+                let descHtml = '';
+                if (c.id === 'craft' && descData) {
+                    descHtml = `<div class="item-info"><strong class="zh">${descData.zh.split('\n')[0]}</strong><strong class="en">${descData.en.split('\n')[0]}</strong><span class="zh">${descData.zh.split('\n').slice(1).join('<br>')}</span><span class="en">${descData.en.split('\n').slice(1).join('<br>')}</span></div>`;
                 }
 
-                let labelHtml = m.labelZh ? `<div class="item-info" style="text-align: center; padding-top: 10px;"><strong><span class="zh">${m.labelZh}</span><span class="en">${m.labelEn}</span></strong></div>` : "";
-                return `<div class="item-card"><div class="item-wrapper" tabindex="0" role="button" aria-label="查看作品大图" onclick="openLB(${idx},'${lightboxUrls}')" onkeydown="if(event.key==='Enter') this.click()">${mediaTag}${sizeOverlayHtml}</div>${labelHtml}</div>`;
-            }).join('');
-
-            itemsHtml += docsHtml;
-            let itemCount = mediaItems.length + (c.isExhibition ? 3 : 0);
-            let sparseClass = (itemCount > 0 && itemCount < 8) ? " sparse-grid" : "";
-            totalHtml += `<div class="cat-group" id="cat-node-${pageId}-${c.id}"><div class="cat-header"><span class="zh">${c.zh}</span><span class="en">${c.en}</span></div><div class="digital-masonry${sparseClass}">${itemsHtml}</div></div>`;
+                if (m.type === 'video') {
+                    catHtml += `<div class="item-card"><div class="item-wrapper"><video src="${m.src}" class="img-thumb" controls controlsList="nodownload" preload="metadata"></video></div></div>`;
+                } else {
+                    catHtml += `<div class="item-card"><div class="item-wrapper" onclick="openLB(${idx}, '${urls}')"><img src="${m.src}" class="img-thumb" loading="lazy" alt=""><div class="size-overlay">${sizeText || ''}</div></div>${descHtml}</div>`;
+                }
+            });
+            catHtml += `</div></div>`;
+            totalHtml += catHtml;
         });
 
         r(`section-${pageId}`, totalHtml);
-
-        document.querySelectorAll(`#section-${pageId} .item-wrapper:not(.scroll-reveal)`).forEach(el => {
+        
+        document.querySelectorAll(`#section-${pageId} .item-wrapper`).forEach(el => {
             scrollRevealObserver.observe(el);
         });
     }
 
-    function updateSlideByIndex(newIndex) { const imgs = document.querySelectorAll('#ppt-imgs-container img'); if (!imgs.length) return; imgs[pptIdx].classList.remove('active'); pptIdx = (newIndex + imgs.length) % imgs.length; imgs[pptIdx].classList.add('active'); updatePPTCounter(); }
-    
-    function resetAutoTimer() { 
-        if (pptTimer) { clearInterval(pptTimer); pptTimer = null; } 
-        if (!pptPaused) { 
-            pptTimer = setInterval(() => { 
-                const imgs = document.querySelectorAll('#ppt-imgs-container img'); 
-                if (!imgs.length) return; 
-                imgs[pptIdx].classList.remove('active'); 
-                pptIdx = (pptIdx + 1) % imgs.length; 
-                imgs[pptIdx].classList.add('active'); 
-                updatePPTCounter(); 
-            }, 4000); 
-        } 
+    // ================== 灯箱（Lightbox）与PPT轮播逻辑 ==================
+    function openLB(idx, urlsStr) {
+        currentGallery = urlsStr.split('|');
+        currentIndex = idx;
+        document.getElementById('lightbox').style.display = 'flex';
+        document.body.classList.add('lightbox-open');
+        updateLB();
+    }
+    function updateLB() {
+        const src = currentGallery[currentIndex];
+        document.getElementById('lb-content').innerHTML = `<img src="${src}" id="lb-target">`;
+    }
+    function changeImg(dir) {
+        currentIndex += dir;
+        if (currentIndex < 0) currentIndex = currentGallery.length - 1;
+        if (currentIndex >= currentGallery.length) currentIndex = 0;
+        updateLB();
+    }
+    function closeLB() {
+        document.getElementById('lightbox').style.display = 'none';
+        document.body.classList.remove('lightbox-open');
+    }
+    function openFeaturedLB(idx) {
+        openLB(idx, featuredHdImages.join('|'));
     }
     
-    function manualPrevSlide(e) { if (e) e.stopPropagation(); updateSlideByIndex(pptIdx - 1); resetAutoTimer(); }
-    function manualNextSlide(e) { if (e) e.stopPropagation(); updateSlideByIndex(pptIdx + 1); resetAutoTimer(); }
-    
-    function togglePPT(event) { 
-        if (event && event.target && (event.target.classList.contains('ppt-nav-btn') || event.target.closest('.ppt-nav-btn'))) return; 
-        const box = document.getElementById('ppt-box'); 
-        if (pptPaused) { 
-            pptPaused = false; box.classList.remove('is-paused'); resetAutoTimer(); 
-        } else { 
-            pptPaused = true; if (pptTimer) { clearInterval(pptTimer); pptTimer = null; } box.classList.add('is-paused'); 
-        } 
-        updatePPTCounter(); 
+    function togglePPT(e) {
+        if(e.target.closest('.ppt-nav-btn')) return;
+        pptPaused = !pptPaused;
+        const slideshow = document.getElementById('ppt-box');
+        if(pptPaused) {
+            slideshow.classList.add('is-paused');
+            clearInterval(pptTimer);
+        } else {
+            slideshow.classList.remove('is-paused');
+            pptTimer = setInterval(() => { manualNextSlide(); }, 3000);
+        }
     }
-    
-    function updatePPTCounter() { const ctr = document.getElementById('ppt-counter'); if(ctr) ctr.innerText = `${pptPaused ? 'PAUSED' : 'PLAYING'} | ${pptIdx + 1} / ${portfolioTotalCount}`; }
-    
     function initPPT() {
-        let html = "";
-        for (let i = 1; i <= portfolioTotalCount; i++) {
-            if (i <= 3) { html += `<img src="images/portfolio/portfolio_${i}.jpg" class="${i === 1 ? 'active' : ''}">`; } 
-            else { html += `<img data-src="images/portfolio/portfolio_${i}.jpg" class="">`; }
-        }
-        const container = document.getElementById('ppt-imgs-container');
-        if(container) {
-            container.innerHTML = html;
-            pptIdx = 0; pptPaused = false;
-            resetAutoTimer();
-            updatePPTCounter();
-            document.getElementById('ppt-box')?.classList.remove('is-paused');
-            setTimeout(() => {
-                const lazyImgs = document.querySelectorAll('#ppt-imgs-container img[data-src]');
-                lazyImgs.forEach(img => { img.setAttribute('src', img.getAttribute('data-src')); img.removeAttribute('data-src'); });
-            }, 1500);
-        }
+        let pfL = [];
+        for(let i=1; i<=portfolioTotalCount; i++) pfL.push(`images/portfolio/portfolio_${i}.jpg`);
+        document.getElementById('ppt-imgs-container').innerHTML = pfL.map((m, i) => `<img src="${m}" class="${i===0?'active':''}">`).join('');
+        pptTimer = setInterval(() => { manualNextSlide(); }, 3000);
+    }
+    function manualNextSlide(e) {
+        if(e) e.stopPropagation();
+        changePPT(1);
+    }
+    function manualPrevSlide(e) {
+        if(e) e.stopPropagation();
+        changePPT(-1);
+    }
+    function changePPT(dir) {
+        const imgs = document.querySelectorAll('#ppt-imgs-container img');
+        if(!imgs.length) return;
+        imgs[pptIdx].classList.remove('active');
+        pptIdx = (pptIdx + dir + portfolioTotalCount) % portfolioTotalCount;
+        imgs[pptIdx].classList.add('active');
+        document.getElementById('ppt-counter').innerText = `${pptPaused ? 'PAUSED' : 'PLAYING'} | ${pptIdx + 1} / ${portfolioTotalCount}`;
     }
 
-    let lbScale = 1;
-    let lbTranslateX = 0;
-    let lbTranslateY = 0;
-    let isDraggingImg = false;
-    let startImgX = 0, startImgY = 0;
-    let lastPinchDist = 0;
-
-    function applyZoom() {
-        const target = document.getElementById('lb-target');
-        if (target) {
-            target.style.transform = `translate(${lbTranslateX}px, ${lbTranslateY}px) scale(${lbScale})`;
-            if(lbScale > 1) target.style.cursor = isDraggingImg ? 'grabbing' : 'grab';
-            else target.style.cursor = 'auto';
-        }
+    // ================== 评论与点赞交互 ==================
+    function toggleLike() {
+        const counter = document.getElementById('float-like-count');
+        const btn = document.getElementById('float-like-btn');
+        btn.classList.toggle('liked');
+        counter.innerText = btn.classList.contains('liked') ? '1' : '0';
     }
-
-    function resetZoom() {
-        lbScale = 1; lbTranslateX = 0; lbTranslateY = 0; isDraggingImg = false;
-        applyZoom();
-    }
-
-    function openFeaturedLB(index) { currentGallery = featuredHdImages.slice(); currentIndex = index; showLightbox(); updateLBImage(); }
-    function openLB(i, g) { currentGallery = g.split('|'); currentIndex = i; showLightbox(); updateLBImage(); }
-    function showLightbox() { document.getElementById('lightbox').style.display = 'flex'; document.body.classList.add('lightbox-open'); document.getElementById('lb-container').scrollTop = 0; }
-    
-    function updateLBImage() { 
-        resetZoom(); 
-        const currentImgUrl = currentGallery[currentIndex]; 
-        const c = document.getElementById('lb-content'); 
-        const isVideo = currentImgUrl.toLowerCase().endsWith('.mp4') || currentImgUrl.toLowerCase().endsWith('.mov'); 
-        if (isVideo) { 
-            // 🔒 修改点 4：弹窗播放器同样增加防下载防右键
-            c.innerHTML = `<video src="${currentImgUrl}" id="lb-target" style="cursor:auto; outline:none;" controls autoplay playsinline controlslist="nodownload" disablepictureinpicture oncontextmenu="return false;"></video>`; 
-        } else { 
-            c.innerHTML = `<img src="${currentImgUrl}" id="lb-target" alt="Enlarged Artwork">`; 
-        } 
-        
-        // 隐藏评论区
-        document.getElementById('lb-interaction-panel').style.display = 'none';
-
-        const urlParts = currentImgUrl.split('/'); 
-        const fileName = urlParts[urlParts.length - 1] || "unknown"; 
-        const folderName = urlParts[urlParts.length - 2] || "folder"; 
-        currentWorkId = `${folderName}-${fileName.replace(/\.(jpg|jpeg|png|gif|mp4|mov)$/i, '')}`; 
-        loadInteractionData(currentWorkId); 
-    }
-    
-    function getInteractionData(workId) { let data = localStorage.getItem(`amy_art_v2_${workId}`); if (data) return JSON.parse(data); return { likes: 0, likedByMe: false, comments: [] }; }
-    
-    function loadInteractionData(workId) { 
-        const data = getInteractionData(workId); 
-        const likeCount = document.getElementById('float-like-count'); 
-        likeCount.innerText = data.likes; 
-        const likeBtn = document.getElementById('float-like-btn'); 
-        if (data.likedByMe) { 
-            likeBtn.classList.add('liked'); 
-            likeBtn.querySelector('.heart-icon').innerText = "❤️"; 
-        } else { 
-            likeBtn.classList.remove('liked'); 
-            likeBtn.querySelector('.heart-icon').innerText = "🤍"; 
-        } 
-        const commentList = document.getElementById('comment-list'); 
-        commentList.innerHTML = data.comments.length ? data.comments.map(c => `<div class="comment-item"><strong>${escapeHtml(c.nickname)}</strong><span class="comment-text">${escapeHtml(c.text)}</span><span class="comment-time">${c.time}</span></div>`).join('') : '<div style="color:#666; text-align:center; padding:30px 0;"><span class="zh">暂无评论~</span><span class="en">No comments yet~</span></div>'; 
-    }
-    
-    function toggleLike() { const data = getInteractionData(currentWorkId); if (data.likedByMe) { data.likes = Math.max(0, data.likes - 1); data.likedByMe = false; } else { data.likes += 1; data.likedByMe = true; } localStorage.setItem(`amy_art_v2_${currentWorkId}`, JSON.stringify(data)); loadInteractionData(currentWorkId); }
-    
-    function submitComment(e) { e.preventDefault(); const nickname = document.getElementById('comment-nickname').value.trim(); const text = document.getElementById('comment-text').value.trim(); if(!nickname || !text) return; const data = getInteractionData(currentWorkId); const now = new Date(); const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`; data.comments.push({ nickname, text, time: timeStr }); localStorage.setItem(`amy_art_v2_${currentWorkId}`, JSON.stringify(data)); document.getElementById('comment-text').value = ""; loadInteractionData(currentWorkId); }
-    
-    // ================== 控制评论区展开与滚动 ==================
     function toggleCommentSection() {
         const panel = document.getElementById('lb-interaction-panel');
-        if(panel.style.display === 'none' || panel.style.display === '') {
-            panel.style.display = 'flex';
-            // 展开后平滑向下滚动，展示评论区
-            setTimeout(() => {
-                document.getElementById('lb-container').scrollBy({
-                    top: panel.offsetTop, 
-                    behavior: 'smooth'
-                });
-            }, 50);
-        } else {
-            panel.style.display = 'none';
-        }
+        panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
+        if(panel.style.display === 'flex') panel.scrollIntoView({behavior: "smooth"});
+    }
+    function submitComment(e) {
+        e.preventDefault();
+        const nickname = document.getElementById('comment-nickname').value;
+        const text = document.getElementById('comment-text').value;
+        const list = document.getElementById('comment-list');
+        list.innerHTML += `<div class="comment-item"><strong>${nickname}</strong><div class="comment-text">${text}</div><span class="comment-time">刚刚 / Just now</span></div>`;
+        document.getElementById('comment-nickname').value = '';
+        document.getElementById('comment-text').value = '';
     }
 
-    function escapeHtml(str) { return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
-    function changeImg(dir) { if(currentGallery.length <= 1) return; currentIndex = (currentIndex + dir + currentGallery.length) % currentGallery.length; updateLBImage(); }
-    function closeLB() { document.getElementById('lightbox').style.display = 'none'; document.body.classList.remove('lightbox-open'); document.getElementById('lb-content').innerHTML = ""; const videoElement = document.querySelector('#lb-content video'); if(videoElement) { videoElement.pause(); videoElement.removeAttribute('src'); videoElement.load(); } }
-    
-    function initMobileMenu() { 
-        const dropdowns = document.querySelectorAll('.dropdown'); 
-        dropdowns.forEach(drop => { 
-            const link = drop.querySelector('.nav-link'); 
-            if(link) { 
-                link.addEventListener('click', (e) => { 
-                    if (window.innerWidth > 800) return; 
-                    e.preventDefault(); 
-                    e.stopPropagation(); 
-                    dropdowns.forEach(d => { if(d !== drop) d.classList.remove('open'); }); 
-                    drop.classList.toggle('open'); 
-                }); 
-            } 
-        }); 
-        document.addEventListener('click',(e) => { 
-            if(!e.target.closest('.dropdown')) document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open')); 
-        }); 
-    }
-    
-    function initCustomCursor() { 
-        const cursor = document.getElementById('custom-cursor'); 
-        if (!cursor) return; 
-        document.addEventListener('mousemove', (e) => { 
-            requestAnimationFrame(() => {
-                cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
-            });
-        }); 
-        document.body.addEventListener('mouseenter', (e) => { if (e.target.matches && (e.target.matches('a') || e.target.closest('.item-wrapper') || e.target.closest('.doc-card') || e.target.matches('button') || e.target.matches('.thumb-item') || e.target.closest('.ppt-nav-btn')) ) { cursor.classList.add('hovering'); } }, true); 
-        document.body.addEventListener('mouseleave', (e) => { if (e.target.matches && (e.target.matches('a') || e.target.closest('.item-wrapper') || e.target.closest('.doc-card') || e.target.matches('button') || e.target.matches('.thumb-item') || e.target.closest('.ppt-nav-btn')) ) { cursor.classList.remove('hovering'); } }, true); 
-    }
-
-    function initLightboxZoomEvents() {
-        const lbArea = document.getElementById('lb-media-area');
-        
-        lbArea.addEventListener('wheel', (e) => {
-            if(e.target.closest('.lb-btn') || e.target.closest('.floating-action-bar') || document.getElementById('lightbox').style.display === 'none') return;
-            e.preventDefault(); 
-            lbScale += e.deltaY * -0.0015;
-            lbScale = Math.min(Math.max(0.3, lbScale), 5); 
-            applyZoom();
-        }, {passive: false});
-
-        lbArea.addEventListener('mousedown', e => {
-            if(e.target.closest('.lb-btn') || e.target.closest('.floating-action-bar') || lbScale <= 1) return; 
-            isDraggingImg = true;
-            startImgX = e.clientX - lbTranslateX;
-            startImgY = e.clientY - lbTranslateY;
-            applyZoom();
-        });
-        window.addEventListener('mousemove', e => {
-            if(!isDraggingImg) return;
-            lbTranslateX = e.clientX - startImgX;
-            lbTranslateY = e.clientY - startImgY;
-            applyZoom();
-        });
-        window.addEventListener('mouseup', () => { 
-            isDraggingImg = false; 
-            applyZoom(); 
-        });
-
-        lbArea.addEventListener('touchstart', e => {
-            if(e.target.closest('.lb-btn') || e.target.closest('.floating-action-bar')) return;
-            if(e.touches.length === 1 && lbScale > 1) {
-                isDraggingImg = true;
-                startImgX = e.touches[0].clientX - lbTranslateX;
-                startImgY = e.touches[0].clientY - lbTranslateY;
-            } else if(e.touches.length === 2) {
-                isDraggingImg = false;
-                lastPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-            }
-        }, {passive: false});
-
-        lbArea.addEventListener('touchmove', e => {
-            if(e.target.closest('.lb-btn') || e.target.closest('.floating-action-bar')) return;
-            if(e.touches.length === 2) {
-                e.preventDefault(); 
-                let dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-                lbScale *= (dist / lastPinchDist);
-                lbScale = Math.min(Math.max(0.3, lbScale), 5); 
-                lastPinchDist = dist;
-                applyZoom();
-            } else if(e.touches.length === 1 && isDraggingImg && lbScale > 1) {
-                e.preventDefault();
-                lbTranslateX = e.touches[0].clientX - startImgX;
-                lbTranslateY = e.touches[0].clientY - startImgY;
-                applyZoom();
-            }
-        }, {passive: false});
-
-        lbArea.addEventListener('touchend', e => {
-            isDraggingImg = false;
-            if(e.touches.length === 1 && lbScale > 1) {
-                isDraggingImg = true;
-                startImgX = e.touches[0].clientX - lbTranslateX;
-                startImgY = e.touches[0].clientY - lbTranslateY;
-            }
-            applyZoom();
-        });
-    }
-
-    window.onload = () => {
-        renderFeatured();
-        initPPT();
-        updateHeaderStyle();
-        initMobileMenu();
-        initCustomCursor();
-        initLightboxZoomEvents();
-    };
-
-    let scrollTicking = false;
+    // ================== 滚动监听 ==================
     window.addEventListener('scroll', () => {
-        if (!scrollTicking) {
-            window.requestAnimationFrame(() => {
-                updateHeaderStyle();
-                
-                const backToTopBtn = document.getElementById('back-to-top');
-                if (window.scrollY > 500) backToTopBtn.classList.add('show');
-                else backToTopBtn.classList.remove('show');
+        updateHeaderStyle();
+        const btt = document.getElementById('back-to-top');
+        if (window.scrollY > 300) btt.classList.add('show');
+        else btt.classList.remove('show');
+    });
 
-                document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open')); 
-                document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.add('force-hide')); 
-                clearTimeout(window.hoverRestoreTimer);
-                window.hoverRestoreTimer = setTimeout(() => { document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('force-hide')); }, 300);
-                
-                scrollTicking = false;
-            });
-            scrollTicking = true;
+    // ================== 鼠标特效事件 ==================
+    document.addEventListener('mousemove', (e) => {
+        const cursor = document.getElementById('custom-cursor');
+        if(cursor) {
+            cursor.style.transform = `translate(${e.clientX - cursor.offsetWidth/2}px, ${e.clientY - cursor.offsetHeight/2}px)`;
         }
-    }, { passive: true });
+    });
+    
+    document.addEventListener('mouseover', (e) => {
+        if(e.target.tagName.toLowerCase() === 'a' || e.target.tagName.toLowerCase() === 'button' || e.target.closest('.item-wrapper') || e.target.closest('.thumb-item')) {
+            document.getElementById('custom-cursor')?.classList.add('hovering');
+        }
+    });
+    document.addEventListener('mouseout', (e) => {
+        if(e.target.tagName.toLowerCase() === 'a' || e.target.tagName.toLowerCase() === 'button' || e.target.closest('.item-wrapper') || e.target.closest('.thumb-item')) {
+            document.getElementById('custom-cursor')?.classList.remove('hovering');
+        }
+    });
+
+    // 初始化执行
+    renderFeatured();
+    initPPT();
+    setTimeout(() => updateHeaderStyle(), 100);
+
 </script>
 </body>
 </html>
